@@ -27,6 +27,7 @@ import org.talend.components.api.component.Connector;
 import org.talend.components.api.component.ISchemaListener;
 import org.talend.components.api.component.PropertyPathConnector;
 import org.talend.components.common.SchemaProperties;
+import org.talend.components.common.tableaction.TableAction;
 import org.talend.components.snowflake.SnowflakeConnectionTableProperties;
 import org.talend.components.snowflake.SnowflakeTableProperties;
 import org.talend.daikon.avro.SchemaConstants;
@@ -47,6 +48,8 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         UPSERT,
         DELETE
     }
+
+    public Property<TableAction.TableActionEnum> tableAction = newEnum("tableAction", TableAction.TableActionEnum.class);
 
     public Property<OutputAction> outputAction = newEnum("outputAction", OutputAction.class); // $NON-NLS-1$
 
@@ -126,6 +129,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     public void setupLayout() {
         super.setupLayout();
         Form mainForm = getForm(Form.MAIN);
+        mainForm.addRow(tableAction);
         mainForm.addRow(outputAction);
         mainForm.addColumn(widget(upsertKeyColumn).setWidgetType(Widget.ENUMERATION_WIDGET_TYPE));
 
