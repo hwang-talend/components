@@ -29,7 +29,7 @@ public class ConvertAvroTypeToSQL {
     private final static Map<Integer, String> SQLTypesMap = new HashMap<>();
 
     static {
-        // Get all field in java.sql.Types
+        // Get a Map with all type java.sql.Types with int id as key
         Field[] fields = java.sql.Types.class.getFields();
         for (int i = 0; i < fields.length; i++) {
             try {
@@ -67,7 +67,7 @@ public class ConvertAvroTypeToSQL {
     public int convertToSQLType(Schema schema) {
         Schema.Type type = schema.getType(); // The standard Avro Type
         LogicalType logicalType = schema.getLogicalType(); // The logical type for Data by example
-        String javaType = null;  // And the Talend java type if standard Avro type is Union
+        String javaType = schema.getProp(SchemaConstants.JAVA_CLASS_FLAG);  // And the Talend java type if standard Avro type is Union
 
         if (logicalType == null && type == Schema.Type.UNION) {
             for (Schema s : schema.getTypes()) {
@@ -107,7 +107,7 @@ public class ConvertAvroTypeToSQL {
             sqlType = Types.VARCHAR;
             break;
         case BYTES:
-            sqlType = Types.BINARY;
+            sqlType = Types.BLOB;
             break;
         case INT:
             sqlType = Types.NUMERIC;
@@ -125,7 +125,7 @@ public class ConvertAvroTypeToSQL {
             sqlType = Types.BOOLEAN;
             break;
         default:
-            throw new UnsupportedOperationException(type + "Avro type not supported");
+            throw new UnsupportedOperationException(type + " Avro type not supported");
         }
 
         return sqlType;
@@ -149,9 +149,9 @@ public class ConvertAvroTypeToSQL {
         } else if (logicalType == LogicalTypes.timestampMicros()) {
             sqlType = Types.TIMESTAMP;
         } else if (logicalType == LogicalTypes.timeMillis()) {
-            sqlType = Types.NUMERIC;
+            sqlType = Types.TIME;
         } else if (logicalType == LogicalTypes.timeMicros()) {
-            sqlType = Types.NUMERIC;
+            sqlType = Types.TIME;
         } else {
             throw new UnsupportedOperationException("Logical type " + logicalType + " not supported");
         }
@@ -167,19 +167,19 @@ public class ConvertAvroTypeToSQL {
 
         switch (javaType) {
         case "java.lang.Byte":
-            sqlType = Types.SMALLINT;
+            sqlType = Types.NUMERIC;
             break;
         case "java.lang.Short":
-            sqlType = Types.SMALLINT;
+            sqlType = Types.NUMERIC;
             break;
         case "java.lang.Character":
-            sqlType = Types.CHAR;
+            sqlType = Types.VARCHAR;
             break;
         case "java.util.Date":
             sqlType = Types.DATE;
             break;
         case "java.math.BigDecimal":
-            sqlType = Types.DOUBLE;
+            sqlType = Types.NUMERIC;
             break;
         default:
             throw new UnsupportedOperationException(javaType + " class can't be converted to SQL type.");
