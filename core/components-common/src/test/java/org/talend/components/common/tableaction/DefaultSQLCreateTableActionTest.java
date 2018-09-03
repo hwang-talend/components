@@ -15,7 +15,11 @@ import static org.junit.Assert.assertEquals;
 
 public class DefaultSQLCreateTableActionTest {
 
+    final static int CUSTOMIZED_SQL_TYPE_DATETIMETZ = -50001;
+    final static int CUSTOMIZED_SQL_TYPE_VARIANT = -50002;
+
     private static Schema schema;
+
 
     @Before
     public void createSchema(){
@@ -273,11 +277,12 @@ public class DefaultSQLCreateTableActionTest {
                 new DefaultSQLCreateTableAction(new String[]{"MyTable"}, schema, false, false, true);
         TableActionConfig conf = new TableActionConfig();
 
-        conf.CONVERT_JAVATYPE_TO_SQLTYPE.put("java.util.Date", -50001);
-        conf.CONVERT_LOGICALTYPE_TO_SQLTYPE.put(LogicalTypes.date(), -50001);
-        conf.CONVERT_AVROTYPE_TO_SQLTYPE.put(Schema.Type.RECORD, -50002);
-        conf.CUSTOMIZE_SQLTYPE_TYPENAME.put(-50001, "datetime_tz");
-        conf.CUSTOMIZE_SQLTYPE_TYPENAME.put(-50002, "VARIANT");
+        conf.CONVERT_JAVATYPE_TO_SQLTYPE.put("java.util.Date", CUSTOMIZED_SQL_TYPE_DATETIMETZ);
+        conf.CONVERT_LOGICALTYPE_TO_SQLTYPE.put(LogicalTypes.date(), CUSTOMIZED_SQL_TYPE_DATETIMETZ);
+        conf.CONVERT_AVROTYPE_TO_SQLTYPE.put(Schema.Type.RECORD, CUSTOMIZED_SQL_TYPE_VARIANT);
+
+        conf.CUSTOMIZE_SQLTYPE_TYPENAME.put(CUSTOMIZED_SQL_TYPE_DATETIMETZ, "datetime_tz");
+        conf.CUSTOMIZE_SQLTYPE_TYPENAME.put(CUSTOMIZED_SQL_TYPE_VARIANT, "VARIANT");
 
         conf.SQL_DROP_TABLE_SUFFIX = " CASCADE";
         conf.SQL_UPPERCASE_IDENTIFIER = true;

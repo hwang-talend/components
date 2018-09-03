@@ -104,6 +104,7 @@ public class ConvertAvroTypeToSQL {
 
         switch (type) {
         case STRING:
+        case ENUM:
             sqlType = Types.VARCHAR;
             break;
         case BYTES:
@@ -116,15 +117,16 @@ public class ConvertAvroTypeToSQL {
             sqlType = Types.NUMERIC;
             break;
         case FLOAT:
-            sqlType = Types.DOUBLE;
+            sqlType = Types.NUMERIC;
             break;
         case DOUBLE:
-            sqlType = Types.DOUBLE;
+            sqlType = Types.NUMERIC;
             break;
         case BOOLEAN:
             sqlType = Types.BOOLEAN;
             break;
         default:
+            // ignored types RECORD, ARRAY, MAP, FIXED, NULL
             throw new UnsupportedOperationException(type + " Avro type not supported");
         }
 
@@ -153,6 +155,7 @@ public class ConvertAvroTypeToSQL {
         } else if (logicalType == LogicalTypes.timeMicros()) {
             sqlType = Types.TIME;
         } else {
+            // All logical type should be supported
             throw new UnsupportedOperationException("Logical type " + logicalType + " not supported");
         }
 

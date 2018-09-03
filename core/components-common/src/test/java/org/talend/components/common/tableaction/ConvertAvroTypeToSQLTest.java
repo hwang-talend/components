@@ -83,7 +83,7 @@ public class ConvertAvroTypeToSQLTest {
         assertEquals(Types.DATE, sql_int);
 
         sql_int = conv.convertToSQLType(schema.getField("float_fld").schema());
-        assertEquals(Types.DOUBLE, sql_int);
+        assertEquals(Types.NUMERIC, sql_int);
 
         sql_int = conv.convertToSQLType(schema.getField("timestamp_fld").schema());
         assertEquals(Types.TIMESTAMP, sql_int);
