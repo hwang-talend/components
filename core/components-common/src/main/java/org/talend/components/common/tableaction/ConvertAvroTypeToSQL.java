@@ -116,7 +116,7 @@ public class ConvertAvroTypeToSQL {
             sqlType = Types.NUMERIC;
             break;
         case FLOAT:
-            sqlType = Types.FLOAT;
+            sqlType = Types.DOUBLE;
             break;
         case DOUBLE:
             sqlType = Types.DOUBLE;
