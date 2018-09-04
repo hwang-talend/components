@@ -66,6 +66,11 @@ public abstract class TableAction {
         return name.toString();
     }
 
+    /**
+     * Uppercase take precedence on lowercase.
+     * @param identifier
+     * @return The identifier in the right case.
+     */
     public String updateCaseIdentifier(String identifier){
         if(this.getConfig().SQL_UPPERCASE_IDENTIFIER){
             return identifier.toUpperCase();
