@@ -62,7 +62,7 @@ public class DefaultSQLCreateTableActionTest {
             List<String> queries = action.getQueries();
             assertEquals(1, queries.size());
             assertEquals(
-                    "CREATE TABLE MyTable (id NUMERIC, name VARCHAR(255) DEFAULT \"ok\", date DATE, salary MY_DOUBLE(38, 4), updated TIMESTAMP, CONSTRAINT pk_MyTable PRIMARY KEY (id, name))",
+                    "CREATE TABLE MyTable (id INTEGER, name VARCHAR(255) DEFAULT \"ok\", date DATE, salary MY_DOUBLE(38, 4), updated TIMESTAMP, CONSTRAINT pk_MyTable PRIMARY KEY (id, name))",
                     queries.get(0));
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,7 +80,7 @@ public class DefaultSQLCreateTableActionTest {
             List<String> queries = action.getQueries();
             assertEquals(1, queries.size());
             assertEquals(
-                    "CREATE TABLE IF NOT EXISTS MyTable (id NUMERIC, name VARCHAR(255) DEFAULT \"ok\", date DATE, salary MY_DOUBLE(38, 4), updated TIMESTAMP, CONSTRAINT pk_MyTable PRIMARY KEY (id, name))",
+                    "CREATE TABLE IF NOT EXISTS MyTable (id INTEGER, name VARCHAR(255) DEFAULT \"ok\", date DATE, salary MY_DOUBLE(38, 4), updated TIMESTAMP, CONSTRAINT pk_MyTable PRIMARY KEY (id, name))",
                     queries.get(0));
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,7 +101,7 @@ public class DefaultSQLCreateTableActionTest {
             assertEquals(2, queries.size());
             assertEquals("DROP TABLE MyTable CASCADE", queries.get(0));
             assertEquals(
-                    "CREATE TABLE MyTable (id NUMERIC, name VARCHAR(255) DEFAULT \"ok\", date DATE, salary MY_DOUBLE(38, 4), updated TIMESTAMP, CONSTRAINT pk_MyTable PRIMARY KEY (id, name))",
+                    "CREATE TABLE MyTable (id INTEGER, name VARCHAR(255) DEFAULT \"ok\", date DATE, salary MY_DOUBLE(38, 4), updated TIMESTAMP, CONSTRAINT pk_MyTable PRIMARY KEY (id, name))",
                     queries.get(1));
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,7 +122,7 @@ public class DefaultSQLCreateTableActionTest {
             assertEquals(2, queries.size());
             assertEquals("DROP TABLE IF EXISTS MyTable CASCADE", queries.get(0));
             assertEquals(
-                    "CREATE TABLE MyTable (id NUMERIC, name VARCHAR(255) DEFAULT \"ok\", date DATE, salary MY_DOUBLE(38, 4), updated TIMESTAMP, CONSTRAINT pk_MyTable PRIMARY KEY (id, name))",
+                    "CREATE TABLE MyTable (id INTEGER, name VARCHAR(255) DEFAULT \"ok\", date DATE, salary MY_DOUBLE(38, 4), updated TIMESTAMP, CONSTRAINT pk_MyTable PRIMARY KEY (id, name))",
                     queries.get(1));
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,7 +144,7 @@ public class DefaultSQLCreateTableActionTest {
             assertEquals(2, queries.size());
             assertEquals("DROP TABLE IF EXISTS MYTABLE CASCADE", queries.get(0));
             assertEquals(
-                    "CREATE TABLE MYTABLE (ID NUMERIC, NAME VARCHAR(255) DEFAULT \"ok\", DATE DATE, SALARY MY_DOUBLE(38, 4), UPDATED TIMESTAMP, CONSTRAINT pk_MYTABLE PRIMARY KEY (ID, NAME))",
+                    "CREATE TABLE MYTABLE (ID INTEGER, NAME VARCHAR(255) DEFAULT \"ok\", DATE DATE, SALARY MY_DOUBLE(38, 4), UPDATED TIMESTAMP, CONSTRAINT pk_MYTABLE PRIMARY KEY (ID, NAME))",
                     queries.get(1));
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,7 +188,7 @@ public class DefaultSQLCreateTableActionTest {
             assertEquals(2, queries.size());
             assertEquals("SQL_DROP_TABLE_PREFIX SQL_DROP_TABLE SQL_DROP_TABLE_IF_EXISITS MyTable SQL_DROP_TABLE_SUFFIX", queries.get(0));
             assertEquals(
-                    "SQL_CREATE_TABLE_PREFIX SQL_CREATE_TABLE SQL_CREATE_TABLE_IF_NOT_EXISTS MyTable {id NUMERIC| name VARCHAR<255> SQL_CREATE_TABLE_DEFAULT \"ok\"| date DATE| salary MY_DOUBLE/38#4\\| updated TIMESTAMP| SQL_CREATE_TABLE_CONSTRAINT SQL_CREATE_TABLE_PRIMARY_KEY_PREFIXMyTable SQL_CREATE_TABLE_PRIMARY_KEY [id| name]}",
+                    "SQL_CREATE_TABLE_PREFIX SQL_CREATE_TABLE SQL_CREATE_TABLE_IF_NOT_EXISTS MyTable {id INTEGER| name VARCHAR<255> SQL_CREATE_TABLE_DEFAULT \"ok\"| date DATE| salary MY_DOUBLE/38#4\\| updated TIMESTAMP| SQL_CREATE_TABLE_CONSTRAINT SQL_CREATE_TABLE_PRIMARY_KEY_PREFIXMyTable SQL_CREATE_TABLE_PRIMARY_KEY [id| name]}",
                     queries.get(1));
         } catch (Exception e) {
             e.printStackTrace();
@@ -295,7 +295,7 @@ public class DefaultSQLCreateTableActionTest {
             assertEquals(2, queries.size());
             assertEquals("DROP TABLE IF EXISTS MYTABLE CASCADE", queries.get(0));
             assertEquals(
-                    "CREATE TABLE MYTABLE (ID NUMERIC, NAME VARCHAR(255) DEFAULT \"ok\", DATE DATETIME_TZ, SALARY MY_DOUBLE(38, 4), UPDATED TIMESTAMP, MYVARIANT VARIANT, CONSTRAINT pk_MYTABLE PRIMARY KEY (ID, NAME))",
+                    "CREATE TABLE MYTABLE (ID INTEGER, NAME VARCHAR(255) DEFAULT \"ok\", DATE DATETIME_TZ, SALARY MY_DOUBLE(38, 4), UPDATED TIMESTAMP, MYVARIANT VARIANT, CONSTRAINT pk_MYTABLE PRIMARY KEY (ID, NAME))",
                     queries.get(1));
         } catch (Exception e) {
             e.printStackTrace();

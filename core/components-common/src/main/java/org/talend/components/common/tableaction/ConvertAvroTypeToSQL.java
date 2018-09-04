@@ -15,7 +15,9 @@ package org.talend.components.common.tableaction;
 import org.apache.avro.LogicalType;
 import org.apache.avro.LogicalTypes;
 import org.apache.avro.Schema;
+import org.apache.avro.reflect.AvroSchema;
 import org.talend.daikon.avro.AvroRegistry;
+import org.talend.daikon.avro.AvroUtils;
 import org.talend.daikon.avro.SchemaConstants;
 
 import java.lang.reflect.Field;
@@ -104,17 +106,16 @@ public class ConvertAvroTypeToSQL {
 
         switch (type) {
         case STRING:
-        case ENUM:
             sqlType = Types.VARCHAR;
             break;
         case BYTES:
             sqlType = Types.BLOB;
             break;
         case INT:
-            sqlType = Types.NUMERIC;
+            sqlType = Types.INTEGER;
             break;
         case LONG:
-            sqlType = Types.NUMERIC;
+            sqlType = Types.INTEGER;
             break;
         case FLOAT:
             sqlType = Types.NUMERIC;
@@ -126,7 +127,7 @@ public class ConvertAvroTypeToSQL {
             sqlType = Types.BOOLEAN;
             break;
         default:
-            // ignored types RECORD, ARRAY, MAP, FIXED, NULL
+            // ignored types ENUM, RECORD, MAP, FIXED, ARRAY, NULL
             throw new UnsupportedOperationException(type + " Avro type not supported");
         }
 
@@ -143,7 +144,7 @@ public class ConvertAvroTypeToSQL {
         if (logicalType == LogicalTypes.timestampMillis()) {
             sqlType = Types.TIMESTAMP;
         } else if (logicalType instanceof LogicalTypes.Decimal) {
-            sqlType = Types.DOUBLE;
+            sqlType = Types.NUMERIC;
         } else if (logicalType == LogicalTypes.date()) {
             sqlType = Types.DATE;
         } else if (logicalType == LogicalTypes.uuid()) {
@@ -170,10 +171,10 @@ public class ConvertAvroTypeToSQL {
 
         switch (javaType) {
         case "java.lang.Byte":
-            sqlType = Types.NUMERIC;
+            sqlType = Types.SMALLINT;
             break;
         case "java.lang.Short":
-            sqlType = Types.NUMERIC;
+            sqlType = Types.SMALLINT;
             break;
         case "java.lang.Character":
             sqlType = Types.VARCHAR;
