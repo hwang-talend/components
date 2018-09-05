@@ -28,6 +28,7 @@ import org.talend.components.api.component.ISchemaListener;
 import org.talend.components.api.component.PropertyPathConnector;
 import org.talend.components.common.SchemaProperties;
 import org.talend.components.common.tableaction.TableAction;
+import org.talend.components.common.tableaction.properties.TableActionProvider;
 import org.talend.components.snowflake.SnowflakeConnectionTableProperties;
 import org.talend.components.snowflake.SnowflakeTableProperties;
 import org.talend.daikon.avro.SchemaConstants;
@@ -38,7 +39,7 @@ import org.talend.daikon.properties.property.Property;
 import org.talend.daikon.serialize.PostDeserializeSetup;
 import org.talend.daikon.serialize.migration.SerializeSetVersion;
 
-public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperties implements SerializeSetVersion {
+public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperties implements SerializeSetVersion, TableActionProvider<TableAction.TableActionEnum> {
 
     private static final int CONVERT_COLUMNS_AND_TABLE_TO_UPPERCASE_VERSION = 1;
 
@@ -100,6 +101,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     @Override
     public void setupProperties() {
         super.setupProperties();
+        table.setTableaActionProvider(this);
 
         outputAction.setValue(OutputAction.INSERT);
         ISchemaListener listener;
@@ -144,6 +146,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     @Override
     public void refreshLayout(Form form) {
         super.refreshLayout(form);
+        table.setTableaActionProvider(this);
 
         if (form.getName().equals(Form.MAIN)) {
             Form advForm = getForm(Form.ADVANCED);
@@ -236,5 +239,10 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
             migrated = true;
         }
         return migrated;
+    }
+
+    @Override
+    public TableAction.TableActionEnum getTableAction(){
+        return tableAction.getValue();
     }
 }
