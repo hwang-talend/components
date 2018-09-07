@@ -43,7 +43,7 @@ public class SnowflakeTableProperties extends ComponentPropertiesImpl implements
     //
     public StringProperty tableName = newString("tableName"); //$NON-NLS-1$
 
-    protected TableActionProvider tableActionProvider = null;
+    protected transient TableActionProvider tableActionProvider = null;
 
     public ISchemaListener schemaListener;
 
@@ -69,6 +69,7 @@ public class SnowflakeTableProperties extends ComponentPropertiesImpl implements
     public void setupLayout() {
         super.setupLayout();
         Form tableForm = Form.create(this, Form.MAIN);
+
         tableForm.addRow(widget(tableName).setWidgetType(Widget.NAME_SELECTION_AREA_WIDGET_TYPE));
         refreshLayout(tableForm);
 
@@ -121,5 +122,9 @@ public class SnowflakeTableProperties extends ComponentPropertiesImpl implements
 
     public void setTableaActionProvider(TableActionProvider tableaActionProvider){
         this.tableActionProvider = tableaActionProvider;
+    }
+
+    public TableActionProvider getTableaActionProvider(){
+        return this.tableActionProvider;
     }
 }

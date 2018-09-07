@@ -37,11 +37,11 @@ public class TableActionConfig {
     public String SQL_CREATE_TABLE_LENGTH_START = "(";
     public String SQL_CREATE_TABLE_LENGTH_END = ")";
     public boolean SQL_CREATE_TABLE_LENGTH_ENABLED = true;
-    public String SQL_CREATE_TABLE_PRECISION_START = "(";
-    public String SQL_CREATE_TABLE_PRECISION_END = ")";
-    public String SQL_CREATE_TABLE_SCALE_SEP = ", ";
+    /*public String SQL_CREATE_TABLE_PRECISION_START = "(";
+    public String SQL_CREATE_TABLE_PRECISION_END = ")";*/
+    public String SQL_CREATE_TABLE_PRECISION_SEP = ", ";
     public boolean SQL_CREATE_TABLE_PRECISION_ENABLED = true;
-    public boolean SQL_CREATE_TABLE_SCALE_ENABLED = true;
+    //public boolean SQL_CREATE_TABLE_SCALE_ENABLED = true;
     public String SQL_CREATE_TABLE_CONSTRAINT = "CONSTRAINT";
     public boolean SQL_CREATE_TABLE_CONSTRAINT_ENABLED = true;
     public String SQL_CREATE_TABLE_PRIMARY_KEY_PREFIX = "pk_";
@@ -69,6 +69,7 @@ public class TableActionConfig {
     public Map<String, Integer> CONVERT_JAVATYPE_TO_SQLTYPE = new HashMap<>();
     public Map<LogicalType, Integer> CONVERT_LOGICALTYPE_TO_SQLTYPE = new HashMap<>();
     public Map<Schema.Type, Integer> CONVERT_AVROTYPE_TO_SQLTYPE = new HashMap<>();
+    public Map<Integer, Integer> CONVERT_SQLTYPE_TO_ANOTHER_SQLTYPE = new HashMap<>();
 
     public Map<Integer, String> CUSTOMIZE_SQLTYPE_TYPENAME = new HashMap<>();
 

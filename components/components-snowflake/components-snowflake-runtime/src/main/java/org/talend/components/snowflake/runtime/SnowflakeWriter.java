@@ -133,7 +133,10 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
         boolean isUpperCase = sprops.convertColumnsAndTableToUppercase.getValue();
         List<String> keyStr = new ArrayList<>();
         List<String> columnsStr = new ArrayList<>();
-        for (Field f : columns) {
+        int i = 0;
+        for (Field overlapField : columns) {
+            Field f = overlapField == null ? mainSchema.getFields().get(i) : overlapField;
+            i++;
             String dbColumnName = f.getProp(SchemaConstants.TALEND_COLUMN_DB_COLUMN_NAME);
             if(dbColumnName == null){
                 dbColumnName = f.name();
@@ -162,7 +165,7 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
     @SuppressWarnings("unchecked")
     @Override
     public void write(Object datum) throws IOException {
-        if(isFirst) {
+        if(isFirst && datum != null) {
             isFullDyn = mainSchema.getFields().isEmpty() && AvroUtils.isIncludeAllFields(mainSchema);
             TableActionEnum selectedTableAction = sprops.tableAction.getValue();
             if (selectedTableAction != TableActionEnum.TRUNCATE) {
@@ -200,7 +203,7 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
          * This piece will be executed only once per instance. Will not cause performance issue. Perform input and mainSchema
          * synchronization. Such situation is useful in case of Dynamic fields.
          */
-        if (isFirst) {
+        if (isFirst && datum != null) {
             if(!isFullDyn) {
                 collectedFields = DynamicSchemaUtils.getCommonFieldsForDynamicSchema(mainSchema, input.getSchema());
             }
@@ -218,6 +221,7 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
             Field remoteTableField = remoteTableFields.get(i);
             if (f == null) {
                 row[i] = remoteTableField.defaultVal();
+                continue;
             } else {
                 Object inputValue = input.get(f.pos());
                 row[i] = getFieldValue(inputValue, remoteTableField);

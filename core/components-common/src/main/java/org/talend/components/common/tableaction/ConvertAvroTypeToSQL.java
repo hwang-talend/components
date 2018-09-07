@@ -60,7 +60,7 @@ public class ConvertAvroTypeToSQL {
         int sqlType = convertToSQLType(schema);
         String sType = SQLTypesMap.get(sqlType);
         if (sType == null) {
-            throw new UnsupportedOperationException("Can't find " + sqlType + " sql type.");
+            throw new UnsupportedOperationException("Can't find " + sqlType + " sql type. You may add it into TableActionConfig.CUSTOMIZE_SQLTYPE_TYPENAME.");
         }
 
         return sType;
@@ -93,6 +93,10 @@ public class ConvertAvroTypeToSQL {
             sqlType = convertRawAvroType(type);
         } else {
             sqlType = convertTalendAvroType(javaType);
+        }
+
+        if(this.config.CONVERT_SQLTYPE_TO_ANOTHER_SQLTYPE.containsKey(sqlType)){
+            sqlType = this.config.CONVERT_SQLTYPE_TO_ANOTHER_SQLTYPE.get(sqlType);
         }
 
         return sqlType;

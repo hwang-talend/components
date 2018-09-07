@@ -12,7 +12,11 @@
 // ============================================================================
 package org.talend.components.snowflake.runtime.tableaction;
 
+import org.apache.avro.LogicalTypes;
+import org.apache.avro.Schema;
 import org.talend.components.common.tableaction.TableActionConfig;
+
+import java.sql.Types;
 
 public class SnowflakeTableActionConfig extends TableActionConfig {
 
@@ -20,6 +24,15 @@ public class SnowflakeTableActionConfig extends TableActionConfig {
         this.SQL_UPPERCASE_IDENTIFIER = isUpperCase;
         this.SQL_ESCAPE_ENABLED = true;
         this.SQL_DROP_TABLE_SUFFIX = " CASCADE";
+
+        this.CONVERT_AVROTYPE_TO_SQLTYPE.put(Schema.Type.FLOAT, Types.FLOAT);
+        this.CONVERT_AVROTYPE_TO_SQLTYPE.put(Schema.Type.DOUBLE, Types.FLOAT);
+
+        this.CONVERT_LOGICALTYPE_TO_SQLTYPE.put(LogicalTypes.decimal(32), Types.FLOAT);
+
+        this.CONVERT_JAVATYPE_TO_SQLTYPE.put("java.math.BigDecimal", Types.FLOAT);
+
+        this.CONVERT_SQLTYPE_TO_ANOTHER_SQLTYPE.put(Types.BLOB, Types.BINARY);
     }
 
 }

@@ -101,8 +101,8 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     @Override
     public void setupProperties() {
         super.setupProperties();
-        table.setTableaActionProvider(this);
 
+        tableAction.setValue(TableAction.TableActionEnum.NONE);
         outputAction.setValue(OutputAction.INSERT);
         ISchemaListener listener;
 
@@ -120,6 +120,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         }
 
         table = new TableSubclass("table");
+        table.setTableaActionProvider(this);
         table.connection = connection;
         table.setSchemaListener(listener);
         table.setupProperties();
@@ -146,6 +147,9 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     @Override
     public void refreshLayout(Form form) {
         super.refreshLayout(form);
+
+        // the call in setupProperties was not sufficient cause of strange lifecycle
+        // Here it is ok
         table.setTableaActionProvider(this);
 
         if (form.getName().equals(Form.MAIN)) {

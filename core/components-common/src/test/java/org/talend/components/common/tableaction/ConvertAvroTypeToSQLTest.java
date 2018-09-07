@@ -12,7 +12,6 @@ import java.sql.Types;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.Assert.assertEquals;
-import static org.talend.daikon.avro.SchemaConstants.JAVA_CLASS_FLAG;
 
 public class ConvertAvroTypeToSQLTest {
 
@@ -21,7 +20,7 @@ public class ConvertAvroTypeToSQLTest {
     @Before
     public void createSchema() {
 
-        ConvertAvroTypeToSQLTest.schema = SchemaBuilder.builder()
+        schema = SchemaBuilder.builder()
                 .record("main")
                 .fields()
                 .name("integer_fld")
@@ -117,7 +116,71 @@ public class ConvertAvroTypeToSQLTest {
                         .noDefault()
                         .endRecord()))
                 .noDefault()
+                .name("nullable_string_fld")
+                .type(Schema.createUnion(Schema.create(Schema.Type.STRING), Schema.create(Schema.Type.NULL)))
+                .noDefault()
                 .endRecord();
+    }
+
+    @Test
+    public void convertToSQLTypeWithCustomType() {
+        TableActionConfig conf = new TableActionConfig();
+
+        int cust_short = -10001;
+        int cust_timestamp = -10002;
+        int cust_bytes = -10003;
+
+        int cust_unknown = -10009;
+
+        String cust_short_name = "CUST_SHORT";
+        String cust_timestamp_name = "CUST_TIMESTAMP";
+        String cust_bytes_name = "CUST_BYSTES";
+
+        conf.CONVERT_JAVATYPE_TO_SQLTYPE.put("java.lang.Byte", Types.BINARY);
+        conf.CONVERT_JAVATYPE_TO_SQLTYPE.put("java.lang.Short", cust_short);
+
+        conf.CONVERT_LOGICALTYPE_TO_SQLTYPE.put(LogicalTypes.timeMillis(), Types.DOUBLE);
+        conf.CONVERT_LOGICALTYPE_TO_SQLTYPE.put(LogicalTypes.timestampMillis(), cust_timestamp);
+
+        conf.CONVERT_AVROTYPE_TO_SQLTYPE.put(Schema.Type.FLOAT, Types.FLOAT);
+        conf.CONVERT_AVROTYPE_TO_SQLTYPE.put(Schema.Type.BYTES, cust_bytes);
+
+        conf.CUSTOMIZE_SQLTYPE_TYPENAME.put(cust_short, cust_short_name);
+        conf.CUSTOMIZE_SQLTYPE_TYPENAME.put(cust_timestamp, cust_timestamp_name);
+        conf.CUSTOMIZE_SQLTYPE_TYPENAME.put(cust_bytes, cust_bytes_name);
+
+        ConvertAvroTypeToSQL conv = new ConvertAvroTypeToSQL(conf);
+
+        int sql_int = conv.convertToSQLType(schema.getField("byte_fld").schema());
+        assertEquals(Types.BINARY, sql_int);
+
+        sql_int = conv.convertToSQLType(schema.getField("raw_float_fld").schema());
+        assertEquals(Types.FLOAT, sql_int);
+
+        sql_int = conv.convertToSQLType(schema.getField("time_fld").schema());
+        assertEquals(Types.DOUBLE, sql_int);
+
+        String sType = conv.convertToSQLTypeString(schema.getField("short_fld").schema());
+        assertEquals(cust_short_name, sType);
+
+        sType = conv.convertToSQLTypeString(schema.getField("timestamp_fld").schema());
+        assertEquals(cust_timestamp_name, sType);
+
+        sType = conv.convertToSQLTypeString(schema.getField("raw_bytes_fld").schema());
+        assertEquals(cust_bytes_name, sType);
+
+        try{
+            conf.CONVERT_AVROTYPE_TO_SQLTYPE.put(Schema.Type.BYTES, cust_unknown);
+            sType = conv.convertToSQLTypeString(schema.getField("raw_bytes_fld").schema());
+            fail("Should throw an exception since no name have been defined for custom type '"+cust_unknown+"'.");
+        }
+        catch (Exception e){
+        }
+
+        conf.CONVERT_SQLTYPE_TO_ANOTHER_SQLTYPE.put(Types.VARCHAR, Types.BLOB);
+        sql_int = conv.convertToSQLType(schema.getField("string_fld").schema());
+        assertEquals(Types.BLOB, sql_int);
+
     }
 
     @Test
@@ -187,6 +250,9 @@ public class ConvertAvroTypeToSQLTest {
 
         sql_int = conv.convertToSQLType(schema.getField("raw_double_fld").schema());
         assertEquals(Types.NUMERIC, sql_int);
+
+        sql_int = conv.convertToSQLType(schema.getField("nullable_string_fld").schema());
+        assertEquals(Types.VARCHAR, sql_int);
 
     }
 

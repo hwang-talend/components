@@ -8,21 +8,21 @@ import org.junit.Test;
 import org.talend.daikon.avro.AvroUtils;
 import org.talend.daikon.avro.SchemaConstants;
 
-import java.sql.Types;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class DefaultSQLCreateTableActionTest {
 
     final static int CUSTOMIZED_SQL_TYPE_DATETIMETZ = -50001;
+
     final static int CUSTOMIZED_SQL_TYPE_VARIANT = -50002;
 
     private static Schema schema;
 
-
     @Before
-    public void createSchema(){
+    public void createSchema() {
         schema = SchemaBuilder.builder()
                 .record("main")
                 .fields()
@@ -41,8 +41,8 @@ public class DefaultSQLCreateTableActionTest {
                 .noDefault()
                 .name("salary")
                 .prop(SchemaConstants.TALEND_COLUMN_DB_TYPE, "MY_DOUBLE")
-                .prop(SchemaConstants.TALEND_COLUMN_PRECISION, "38")
-                .prop(SchemaConstants.TALEND_COLUMN_SCALE, "4")
+                .prop(SchemaConstants.TALEND_COLUMN_DB_LENGTH, "38")
+                .prop(SchemaConstants.TALEND_COLUMN_PRECISION, "4")
                 .type(AvroUtils._double())
                 .withDefault("0")
                 .name("updated")
@@ -54,7 +54,7 @@ public class DefaultSQLCreateTableActionTest {
     @Test
     public void createTable() {
         DefaultSQLCreateTableAction action =
-                new DefaultSQLCreateTableAction(new String[]{"MyTable"}, schema, false, false, false);
+                new DefaultSQLCreateTableAction(new String[] { "MyTable" }, schema, false, false, false);
         TableActionConfig conf = new TableActionConfig();
         conf.SQL_ESCAPE_ENABLED = false;
         action.setConfig(conf);
@@ -72,7 +72,7 @@ public class DefaultSQLCreateTableActionTest {
     @Test
     public void createTableIfNotExists() {
         DefaultSQLCreateTableAction action =
-                new DefaultSQLCreateTableAction(new String[]{"MyTable"}, schema, true, false, false);
+                new DefaultSQLCreateTableAction(new String[] { "MyTable" }, schema, true, false, false);
         TableActionConfig conf = new TableActionConfig();
         conf.SQL_ESCAPE_ENABLED = false;
         action.setConfig(conf);
@@ -90,7 +90,7 @@ public class DefaultSQLCreateTableActionTest {
     @Test
     public void dropNCreateTable() {
         DefaultSQLCreateTableAction action =
-                new DefaultSQLCreateTableAction(new String[]{"MyTable"}, schema, false, true, false);
+                new DefaultSQLCreateTableAction(new String[] { "MyTable" }, schema, false, true, false);
         TableActionConfig conf = new TableActionConfig();
         conf.SQL_ESCAPE_ENABLED = false;
         conf.SQL_DROP_TABLE_SUFFIX = " CASCADE";
@@ -111,7 +111,7 @@ public class DefaultSQLCreateTableActionTest {
     @Test
     public void dropIfExistsNCreateTable() {
         DefaultSQLCreateTableAction action =
-                new DefaultSQLCreateTableAction(new String[]{"MyTable"}, schema, false, false, true);
+                new DefaultSQLCreateTableAction(new String[] { "MyTable" }, schema, false, false, true);
         TableActionConfig conf = new TableActionConfig();
         conf.SQL_ESCAPE_ENABLED = false;
         conf.SQL_DROP_TABLE_SUFFIX = " CASCADE";
@@ -132,7 +132,7 @@ public class DefaultSQLCreateTableActionTest {
     @Test
     public void dropIfExistsNCreateTableUppercase() {
         DefaultSQLCreateTableAction action =
-                new DefaultSQLCreateTableAction(new String[]{"MyTable"}, schema, false, false, true);
+                new DefaultSQLCreateTableAction(new String[] { "MyTable" }, schema, false, false, true);
         TableActionConfig conf = new TableActionConfig();
         conf.SQL_ESCAPE_ENABLED = false;
         conf.SQL_DROP_TABLE_SUFFIX = " CASCADE";
@@ -154,7 +154,7 @@ public class DefaultSQLCreateTableActionTest {
     @Test
     public void dropIfExistsNCreateTableWithConfig() {
         DefaultSQLCreateTableAction action =
-                new DefaultSQLCreateTableAction(new String[]{"MyTable"}, schema, true, false, true);
+                new DefaultSQLCreateTableAction(new String[] { "MyTable" }, schema, true, false, true);
         TableActionConfig conf = new TableActionConfig();
         conf.SQL_ESCAPE_ENABLED = false;
         conf.SQL_DROP_TABLE_PREFIX = "SQL_DROP_TABLE_PREFIX ";
@@ -176,65 +176,18 @@ public class DefaultSQLCreateTableActionTest {
         conf.SQL_CREATE_TABLE_FIELD_ENCLOSURE_END = "}";
         conf.SQL_CREATE_TABLE_LENGTH_START = "<";
         conf.SQL_CREATE_TABLE_LENGTH_END = ">";
-        conf.SQL_CREATE_TABLE_PRECISION_START = "/";
-        conf.SQL_CREATE_TABLE_PRECISION_END = "\\";
-        conf.SQL_CREATE_TABLE_SCALE_SEP = "#";
-
+        conf.SQL_CREATE_TABLE_PRECISION_SEP = "#";
 
         action.setConfig(conf);
 
         try {
             List<String> queries = action.getQueries();
             assertEquals(2, queries.size());
-            assertEquals("SQL_DROP_TABLE_PREFIX SQL_DROP_TABLE SQL_DROP_TABLE_IF_EXISITS MyTable SQL_DROP_TABLE_SUFFIX", queries.get(0));
+            assertEquals("SQL_DROP_TABLE_PREFIX SQL_DROP_TABLE SQL_DROP_TABLE_IF_EXISITS MyTable SQL_DROP_TABLE_SUFFIX",
+                    queries.get(0));
             assertEquals(
-                    "SQL_CREATE_TABLE_PREFIX SQL_CREATE_TABLE SQL_CREATE_TABLE_IF_NOT_EXISTS MyTable {id INTEGER| name VARCHAR<255> SQL_CREATE_TABLE_DEFAULT \"ok\"| date DATE| salary MY_DOUBLE/38#4\\| updated TIMESTAMP| SQL_CREATE_TABLE_CONSTRAINT SQL_CREATE_TABLE_PRIMARY_KEY_PREFIXMyTable SQL_CREATE_TABLE_PRIMARY_KEY [id| name]}",
+                    "SQL_CREATE_TABLE_PREFIX SQL_CREATE_TABLE SQL_CREATE_TABLE_IF_NOT_EXISTS MyTable {id INTEGER| name VARCHAR<255> SQL_CREATE_TABLE_DEFAULT \"ok\"| date DATE| salary MY_DOUBLE<38#4>| updated TIMESTAMP| SQL_CREATE_TABLE_CONSTRAINT SQL_CREATE_TABLE_PRIMARY_KEY_PREFIXMyTable SQL_CREATE_TABLE_PRIMARY_KEY [id| name]}",
                     queries.get(1));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void clearNCreateTable() {
-        DefaultSQLClearTableAction action =
-                new DefaultSQLClearTableAction(new String[]{"MyTable"});
-        TableActionConfig conf = new TableActionConfig();
-        conf.SQL_ESCAPE_ENABLED = false;
-        action.setConfig(conf);
-        try {
-            List<String> queries = action.getQueries();
-            assertEquals(1, queries.size());
-            assertEquals("DELETE FROM MyTable", queries.get(0));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void truncateNCreateTable() {
-        DefaultSQLTruncateTableAction action = new DefaultSQLTruncateTableAction(new String[]{"MyTable"});
-        TableActionConfig conf = new TableActionConfig();
-        conf.SQL_ESCAPE_ENABLED = false;
-        action.setConfig(conf);
-        try {
-            List<String> queries = action.getQueries();
-            assertEquals(1, queries.size());
-            assertEquals("TRUNCATE TABLE MyTable", queries.get(0));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void truncateNCreateTableWithFullName() {
-        DefaultSQLTruncateTableAction action = new DefaultSQLTruncateTableAction(new String[]{"mydatabase","myschema","MyTable"});
-        TableActionConfig conf = new TableActionConfig();
-        action.setConfig(conf);
-        try {
-            List<String> queries = action.getQueries();
-            assertEquals(1, queries.size());
-            assertEquals("TRUNCATE TABLE \"mydatabase\".\"myschema\".\"MyTable\"", queries.get(0));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -260,8 +213,8 @@ public class DefaultSQLCreateTableActionTest {
                 .noDefault()
                 .name("salary")
                 .prop(SchemaConstants.TALEND_COLUMN_DB_TYPE, "MY_DOUBLE")
-                .prop(SchemaConstants.TALEND_COLUMN_PRECISION, "38")
-                .prop(SchemaConstants.TALEND_COLUMN_SCALE, "4")
+                .prop(SchemaConstants.TALEND_COLUMN_DB_LENGTH, "38")
+                .prop(SchemaConstants.TALEND_COLUMN_PRECISION, "4")
                 .type(AvroUtils._double())
                 .withDefault("0")
                 .name("updated")
@@ -272,9 +225,8 @@ public class DefaultSQLCreateTableActionTest {
                 .noDefault()
                 .endRecord();
 
-
         DefaultSQLCreateTableAction action =
-                new DefaultSQLCreateTableAction(new String[]{"MyTable"}, schema, false, false, true);
+                new DefaultSQLCreateTableAction(new String[] { "MyTable" }, schema, false, false, true);
         TableActionConfig conf = new TableActionConfig();
 
         conf.CONVERT_JAVATYPE_TO_SQLTYPE.put("java.util.Date", CUSTOMIZED_SQL_TYPE_DATETIMETZ);
@@ -299,6 +251,23 @@ public class DefaultSQLCreateTableActionTest {
                     queries.get(1));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void createTablewithBadName() {
+        try {
+            DefaultSQLCreateTableAction action =
+                    new DefaultSQLCreateTableAction(null, schema, false, false, false);
+            fail("Should fail since table name is null.");
+        } catch (Exception e) {
+        }
+
+        try {
+            DefaultSQLCreateTableAction action =
+                    new DefaultSQLCreateTableAction(new String[]{}, schema, false, false, false);
+            fail("Should fail since table name is empty.");
+        } catch (Exception e) {
         }
     }
 

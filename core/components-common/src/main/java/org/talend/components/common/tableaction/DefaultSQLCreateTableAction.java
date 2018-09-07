@@ -126,7 +126,6 @@ public class DefaultSQLCreateTableAction extends TableAction {
             String sDBType = f.getProp(SchemaConstants.TALEND_COLUMN_DB_TYPE);
             String sDBDefault = f.getProp(SchemaConstants.TALEND_COLUMN_DEFAULT);
             String sDBPrecision = f.getProp(SchemaConstants.TALEND_COLUMN_PRECISION);
-            String sDBScale = f.getProp(SchemaConstants.TALEND_COLUMN_SCALE);
             boolean sDBIsKey = Boolean.valueOf(f.getProp(SchemaConstants.TALEND_COLUMN_IS_KEY)).booleanValue();
 
             String name = sDBName == null ? f.name() : sDBName;
@@ -146,16 +145,13 @@ public class DefaultSQLCreateTableAction extends TableAction {
             if (this.getConfig().SQL_CREATE_TABLE_LENGTH_ENABLED && !isNullOrEmpty(sDBLength)) {
                 sb.append(this.getConfig().SQL_CREATE_TABLE_LENGTH_START);
                 sb.append(sDBLength);
-                sb.append(this.getConfig().SQL_CREATE_TABLE_LENGTH_END);
-            } else if (this.getConfig().SQL_CREATE_TABLE_PRECISION_ENABLED && !isNullOrEmpty(sDBPrecision)) { // or precision/scale
-                sb.append(this.getConfig().SQL_CREATE_TABLE_PRECISION_START);
-                sb.append(sDBPrecision);
-                if (this.getConfig().SQL_CREATE_TABLE_SCALE_ENABLED && !isNullOrEmpty(sDBScale)) {
-                    sb.append(this.getConfig().SQL_CREATE_TABLE_SCALE_SEP);
-                    sb.append(sDBScale);
+                if (this.getConfig().SQL_CREATE_TABLE_PRECISION_ENABLED && !isNullOrEmpty(sDBPrecision)) {
+                    sb.append(this.getConfig().SQL_CREATE_TABLE_PRECISION_SEP);
+                    sb.append(sDBPrecision);
                 }
-                sb.append(this.getConfig().SQL_CREATE_TABLE_PRECISION_END);
+                sb.append(this.getConfig().SQL_CREATE_TABLE_LENGTH_END);
             }
+
 
             if (this.getConfig().SQL_CREATE_TABLE_DEFAULT_ENABLED && !isNullOrEmpty(sDBDefault)) {
                 sb.append(" ");
