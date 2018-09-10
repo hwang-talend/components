@@ -42,6 +42,7 @@ import org.talend.daikon.serialize.migration.SerializeSetVersion;
 public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperties implements SerializeSetVersion, TableActionProvider<TableAction.TableActionEnum> {
 
     private static final int CONVERT_COLUMNS_AND_TABLE_TO_UPPERCASE_VERSION = 1;
+    private static final int TABLE_ACTION_VERSION = 2;
 
     public enum OutputAction {
         INSERT,
@@ -232,7 +233,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
 
     @Override
     public int getVersionNumber() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -242,6 +243,12 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
             convertColumnsAndTableToUppercase.setValue(false);
             migrated = true;
         }
+
+        if(version < TABLE_ACTION_VERSION) {
+            tableAction.setValue(TableAction.TableActionEnum.NONE);
+            migrated = true;
+        }
+
         return migrated;
     }
 
