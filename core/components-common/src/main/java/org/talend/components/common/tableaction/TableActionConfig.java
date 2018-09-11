@@ -37,11 +37,8 @@ public class TableActionConfig {
     public String SQL_CREATE_TABLE_LENGTH_START = "(";
     public String SQL_CREATE_TABLE_LENGTH_END = ")";
     public boolean SQL_CREATE_TABLE_LENGTH_ENABLED = true;
-    /*public String SQL_CREATE_TABLE_PRECISION_START = "(";
-    public String SQL_CREATE_TABLE_PRECISION_END = ")";*/
     public String SQL_CREATE_TABLE_PRECISION_SEP = ", ";
     public boolean SQL_CREATE_TABLE_PRECISION_ENABLED = true;
-    //public boolean SQL_CREATE_TABLE_SCALE_ENABLED = true;
     public String SQL_CREATE_TABLE_CONSTRAINT = "CONSTRAINT";
     public boolean SQL_CREATE_TABLE_CONSTRAINT_ENABLED = true;
     public String SQL_CREATE_TABLE_PRIMARY_KEY_PREFIX = "pk_";
