@@ -110,6 +110,10 @@ public class SnowflakeTableProperties extends ComponentPropertiesImpl implements
                 vr.setMessage(ex.getMessage());
                 vr.setStatus(ValidationResult.Result.ERROR);
             }
+            else {
+                vr.setMessage(ex.getMessage());
+                vr.setStatus(ValidationResult.Result.WARNING);
+            }
         }
         return vr;
     }

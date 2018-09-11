@@ -142,7 +142,7 @@ public class SnowflakeWriterTest {
         timeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         SimpleDateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSXXX");
 
-        Object[] expectedRow = { "FirstValue", "10000", "99.9", dateFormatter.format(dateTime.toDate()), true, timeFormatter.format(new Date(timeMillis)),
+        Object[] expectedRow = { "FirstValue", 10_000, 99.9, dateFormatter.format(dateTime.toDate()), true, timeFormatter.format(new Date(timeMillis)),
                 timestampFormatter.format(new Date(timeStamp)), null };
 
         SnowflakeAvroRegistry registry = SnowflakeAvroRegistry.get();
