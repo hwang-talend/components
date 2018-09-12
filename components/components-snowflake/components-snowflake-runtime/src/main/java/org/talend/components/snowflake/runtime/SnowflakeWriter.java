@@ -153,7 +153,7 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
 
         loader.setProperty(LoaderProperty.columns, columnsStr);
 
-        if (sprops.outputAction.getValue() == UPSERT) {
+        if (UPSERT.equals(sprops.outputAction.getValue())) {
             keyStr.clear();
             keyStr.add(sprops.upsertKeyColumn.getValue());
         }
@@ -336,7 +336,7 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
         }
 
         prop.put(LoaderProperty.columns, columnsStr);
-        if (outputProperties.outputAction.getValue() == UPSERT) {
+        if (UPSERT.equals(outputProperties.outputAction.getValue())) {
             keyStr.clear();
             keyStr.add(outputProperties.upsertKeyColumn.getValue());
         }
@@ -347,7 +347,7 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
         prop.put(LoaderProperty.remoteStage, "~");
 
         TableActionEnum selectedTableAction = outputProperties.tableAction.getValue();
-        if (selectedTableAction == TableActionEnum.TRUNCATE) {
+        if (TableActionEnum.TRUNCATE.equals(selectedTableAction)) {
             prop.put(LoaderProperty.truncateTable, "true");
         }
 
