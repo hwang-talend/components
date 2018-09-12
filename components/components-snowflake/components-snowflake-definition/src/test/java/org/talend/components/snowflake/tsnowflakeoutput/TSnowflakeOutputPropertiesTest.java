@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.talend.components.api.component.PropertyPathConnector;
 import org.talend.components.common.tableaction.TableAction;
-import org.talend.components.common.tableaction.properties.TableActionProvider;
 import org.talend.components.snowflake.tsnowflakeoutput.TSnowflakeOutputProperties.OutputAction;
 import org.talend.daikon.avro.AvroUtils;
 import org.talend.daikon.avro.SchemaConstants;
@@ -215,16 +214,4 @@ public class TSnowflakeOutputPropertiesTest {
 
     }
 
-    @Test
-    public void testSetTableActionProvider(){
-        TableActionProvider tap = new TableActionProvider() {
-            @Override
-            public Enum getTableAction() {
-                return TableAction.TableActionEnum.NONE;
-            }
-        };
-
-        outputProperties.table.setTableaActionProvider(tap);
-        assertEquals(tap, outputProperties.table.getTableaActionProvider());
-    }
 }

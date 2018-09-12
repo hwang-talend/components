@@ -24,8 +24,6 @@ import java.util.List;
 import org.talend.components.api.component.ISchemaListener;
 import org.talend.components.api.properties.ComponentPropertiesImpl;
 import org.talend.components.common.SchemaProperties;
-import org.talend.components.common.tableaction.TableActionUtil;
-import org.talend.components.common.tableaction.properties.TableActionProvider;
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.properties.ValidationResult;
 import org.talend.daikon.properties.ValidationResultMutable;
@@ -42,8 +40,6 @@ public class SnowflakeTableProperties extends ComponentPropertiesImpl implements
     // Properties
     //
     public StringProperty tableName = newString("tableName"); //$NON-NLS-1$
-
-    protected transient TableActionProvider tableActionProvider = null;
 
     public ISchemaListener schemaListener;
 
@@ -106,14 +102,8 @@ public class SnowflakeTableProperties extends ComponentPropertiesImpl implements
             main.schema.setValue(ss.getEndpointSchema(null, tableName.getValue()));
             tableName.setPossibleValues(Collections.emptyList());
         } catch (Exception ex) {
-            if(!TableActionUtil.isCreateTableAction(tableActionProvider)) {
-                vr.setMessage(ex.getMessage());
-                vr.setStatus(ValidationResult.Result.ERROR);
-            }
-            else {
-                vr.setMessage(ex.getMessage());
-                vr.setStatus(ValidationResult.Result.WARNING);
-            }
+            vr.setMessage(ex.getMessage());
+            vr.setStatus(ValidationResult.Result.ERROR);
         }
         return vr;
     }
@@ -123,12 +113,4 @@ public class SnowflakeTableProperties extends ComponentPropertiesImpl implements
         return connection;
     }
 
-
-    public void setTableaActionProvider(TableActionProvider tableaActionProvider){
-        this.tableActionProvider = tableaActionProvider;
-    }
-
-    public TableActionProvider getTableaActionProvider(){
-        return this.tableActionProvider;
-    }
 }

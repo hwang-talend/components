@@ -28,7 +28,6 @@ import org.talend.components.api.component.ISchemaListener;
 import org.talend.components.api.component.PropertyPathConnector;
 import org.talend.components.common.SchemaProperties;
 import org.talend.components.common.tableaction.TableAction;
-import org.talend.components.common.tableaction.properties.TableActionProvider;
 import org.talend.components.snowflake.SnowflakeConnectionTableProperties;
 import org.talend.components.snowflake.SnowflakeTableProperties;
 import org.talend.daikon.avro.SchemaConstants;
@@ -39,7 +38,7 @@ import org.talend.daikon.properties.property.Property;
 import org.talend.daikon.serialize.PostDeserializeSetup;
 import org.talend.daikon.serialize.migration.SerializeSetVersion;
 
-public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperties implements SerializeSetVersion, TableActionProvider<TableAction.TableActionEnum> {
+public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperties implements SerializeSetVersion {
 
     private static final int CONVERT_COLUMNS_AND_TABLE_TO_UPPERCASE_VERSION = 1;
     private static final int TABLE_ACTION_VERSION = 2;
@@ -121,7 +120,6 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         }
 
         table = new TableSubclass("table");
-        table.setTableaActionProvider(this);
         table.connection = connection;
         table.setSchemaListener(listener);
         table.setupProperties();
@@ -148,11 +146,6 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     @Override
     public void refreshLayout(Form form) {
         super.refreshLayout(form);
-
-        // the call in setupProperties was not sufficient cause of strange lifecycle
-        // Here it is ok
-        table.setTableaActionProvider(this);
-
         if (form.getName().equals(Form.MAIN)) {
             Form advForm = getForm(Form.ADVANCED);
             if (advForm != null) {
@@ -252,8 +245,4 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         return migrated;
     }
 
-    @Override
-    public TableAction.TableActionEnum getTableAction(){
-        return tableAction.getValue();
-    }
 }
