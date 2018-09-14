@@ -60,6 +60,8 @@ public class TableActionTest {
 
         tableAction.getConfig().SQL_UPPERCASE_IDENTIFIER = true;
         assertEquals("\"AAAA\"_\"BBBB\"_\"CCCC\"_\"DDDD\"_\"EEEE\"", tableAction.buildFullTableName(new String[]{"aaaa", "bbbb", "cccc", "dddd", "eeee"}, "_", true));
+
+        assertEquals("\"AAAA\"_\"BBBB\"", tableAction.buildFullTableName(new String[]{null, "aaaa", null, null, "bbbb", null}, "_", true));
     }
 
     @Test

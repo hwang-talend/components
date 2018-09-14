@@ -52,6 +52,10 @@ public abstract class TableAction {
         StringBuilder name = new StringBuilder();
         boolean first = true;
         for(String n : fullTableName){
+            if(n == null){
+                continue;
+            }
+
             if(!first){
                 name.append(sep);
             }
