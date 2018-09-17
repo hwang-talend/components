@@ -214,12 +214,13 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
                     .createIndexedRecordConverter(datum.getClass());
         }
 
+        input = getInputRecord(datum);
+
         /*
          * This piece will be executed only once per instance. Will not cause performance issue. Perform input and mainSchema
          * synchronization. Such situation is useful in case of Dynamic fields.
          */
         if (isFirst && datum != null) {
-            input = getInputRecord(datum);
             remoteTableFields = mainSchema.getFields();
 
             isFullDyn = mainSchema.getFields().isEmpty() && AvroUtils.isIncludeAllFields(mainSchema);
