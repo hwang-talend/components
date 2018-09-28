@@ -130,7 +130,13 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
     }
 
     private static StringSchemaInfo getStringSchemaInfo(TSnowflakeOutputProperties outputProperties, Schema mainSchema, List<Field> columns){
-        boolean isUpperCase = outputProperties.convertColumnsAndTableToUppercase.getValue();
+        boolean isUpperCase = false;
+        boolean upsert = false;
+        if(outputProperties != null) {
+            isUpperCase = outputProperties.convertColumnsAndTableToUppercase.getValue();
+            UPSERT.equals(outputProperties.outputAction.getValue());
+        }
+
         List<String> keyStr = new ArrayList<>();
         List<String> columnsStr = new ArrayList<>();
 
@@ -150,7 +156,7 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
             }
         }
 
-        if (UPSERT.equals(outputProperties.outputAction.getValue())) {
+        if (upsert) {
             keyStr.clear();
             keyStr.add(outputProperties.upsertKeyColumn.getValue());
         }
@@ -199,7 +205,6 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
     }
 
     protected void tableActionManagement(Object datum) throws IOException {
-        setLoaderColumnsPropertyAtRuntime(loader, collectedFields);
         execTableAction(datum);
     }
 
@@ -208,10 +213,6 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
     public void write(Object datum) throws IOException {
         if (null == datum) {
             return;
-        }
-        if (null == factory) {
-            factory = (IndexedRecordConverter<Object, ? extends IndexedRecord>) SnowflakeAvroRegistry.get()
-                    .createIndexedRecordConverter(datum.getClass());
         }
 
         input = getInputRecord(datum);
@@ -233,6 +234,7 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
                 remoteTableFields = new ArrayList<>(collectedFields);
             }
 
+            setLoaderColumnsPropertyAtRuntime(loader, collectedFields);
             tableActionManagement(datum);
 
             isFirst = false;
