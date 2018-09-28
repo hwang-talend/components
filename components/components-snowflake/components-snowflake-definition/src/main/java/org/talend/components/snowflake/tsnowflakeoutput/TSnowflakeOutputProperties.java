@@ -29,6 +29,7 @@ import org.talend.components.api.component.PropertyPathConnector;
 import org.talend.components.common.SchemaProperties;
 import org.talend.components.common.tableaction.TableAction;
 import org.talend.components.snowflake.SnowflakeConnectionTableProperties;
+import org.talend.components.snowflake.SnowflakeDbTypeProperties;
 import org.talend.components.snowflake.SnowflakeTableProperties;
 import org.talend.daikon.avro.SchemaConstants;
 import org.talend.daikon.properties.ValidationResult;
@@ -64,6 +65,8 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     public SchemaProperties schemaReject = new SchemaProperties("schemaReject"); //$NON-NLS-1$
 
     public Property<Boolean> convertColumnsAndTableToUppercase = newBoolean("convertColumnsAndTableToUppercase");
+
+    public SnowflakeDbTypeProperties dbtypeTable = new SnowflakeDbTypeProperties("dbtypeTable");
 
     public Property<Boolean> convertEmptyStringsToNull = newBoolean("convertEmptyStringsToNull");
 
@@ -138,6 +141,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         mainForm.addRow(tableAction);
         mainForm.addRow(outputAction);
         mainForm.addColumn(widget(upsertKeyColumn).setWidgetType(Widget.ENUMERATION_WIDGET_TYPE));
+        mainForm.addRow(new Widget(dbtypeTable).setWidgetType(Widget.TABLE_WIDGET_TYPE));
 
         Form advancedForm = getForm(Form.ADVANCED);
         advancedForm.addRow(convertColumnsAndTableToUppercase);
@@ -174,7 +178,9 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
 
     public void beforeUpsertKeyColumn() {
         if (getSchema() != null) {
-            upsertKeyColumn.setPossibleValues(getFieldNames(table.main.schema));
+            List<String> fieldNames = getFieldNames(table.main.schema);
+            upsertKeyColumn.setPossibleValues(fieldNames);
+            dbtypeTable.setFieldNames(fieldNames);
         }
     }
 
