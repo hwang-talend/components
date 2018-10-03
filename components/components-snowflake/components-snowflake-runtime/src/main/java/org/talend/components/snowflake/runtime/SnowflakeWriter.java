@@ -180,8 +180,26 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
         }
     }
 
+    private Map<String, String> getDbTypeMap(Schema schema){
+        Map<String, String> dbTypeMap = new HashMap<>();
+
+        if(!sprops.usePersonalDBType.getValue()){
+            return dbTypeMap;
+        }
+
+        List<String> columns = sprops.dbtypeTable.column.getValue();
+        List<String> dbTypes = sprops.dbtypeTable.dbtype.getValue();
+
+        for(int i = 0; i<columns.size(); i++){
+            dbTypeMap.put(columns.get(i), dbTypes.get(i));
+        }
+
+        return dbTypeMap;
+    }
+
     private void execTableAction(Object datum) throws IOException {
         TableActionEnum selectedTableAction = sprops.tableAction.getValue();
+
         if (selectedTableAction != TableActionEnum.TRUNCATE) {
             SnowflakeConnectionProperties connectionProperties = sprops.getConnectionProperties();
             try {
@@ -197,9 +215,10 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
                     schemaForCreateTable = ((GenericData.Record) datum).getSchema();
                 }
 
+                Map<String, String> dbTypeMap = getDbTypeMap(schemaForCreateTable);
                 TableActionManager.exec(processingConnection, selectedTableAction,
                         new String[] { connectionProperties1.db.getValue(), connectionProperties1.schemaName.getValue(),
-                                sprops.getTableName() }, schemaForCreateTable, conf);
+                                sprops.getTableName() }, schemaForCreateTable, conf, dbTypeMap);
             } catch (IOException e) {
                 throw e;
             } catch (Exception e) {

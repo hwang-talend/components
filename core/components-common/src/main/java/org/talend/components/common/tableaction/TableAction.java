@@ -2,7 +2,9 @@ package org.talend.components.common.tableaction;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class TableAction {
 
@@ -18,6 +20,9 @@ public abstract class TableAction {
 
     private TableActionConfig config = new TableActionConfig();
 
+    // Map association to define db type if SchemaConstants.TALEND_COLUMN_DB_TYPE is not set in schema
+    private Map<String, String> dbTypeMap = new HashMap<>();
+
     /**
      *
      * @return List<String> List of queries to execute.
@@ -28,8 +33,16 @@ public abstract class TableAction {
         this.config = config;
     }
 
+    public void setDbTypeMap(Map<String, String> dbTypeMap){
+        this.dbTypeMap = dbTypeMap;
+    }
+
     public TableActionConfig getConfig(){
         return this.config;
+    }
+
+    public Map<String, String> getDbTypeMap(){
+        return this.dbTypeMap;
     }
 
     public String escape(String value){

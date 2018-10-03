@@ -15,7 +15,9 @@ package org.talend.components.common.tableaction;
 import org.apache.avro.Schema;
 
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TableActionManager {
 
@@ -25,10 +27,17 @@ public class TableActionManager {
             Schema schema) throws Exception {
         exec(connection, action, fullTableName, schema, new TableActionConfig());
     }
+
     public final static void exec(Connection connection, TableAction.TableActionEnum action, String[] fullTableName,
             Schema schema, TableActionConfig config) throws Exception {
+        exec(connection, action, fullTableName, schema, config, new HashMap<String, String>());
+    }
+
+    public final static void exec(Connection connection, TableAction.TableActionEnum action, String[] fullTableName,
+            Schema schema, TableActionConfig config, Map<String, String> dbTypeMap) throws Exception {
         TableAction tableAction = create(action, fullTableName, schema);
         tableAction.setConfig(config);
+        tableAction.setDbTypeMap(dbTypeMap);
         _exec(connection, tableAction.getQueries());
     }
 

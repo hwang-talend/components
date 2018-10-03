@@ -87,7 +87,7 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
     public void setupLayout() {
         super.setupLayout();
         Form mainForm = Form.create(this, Form.MAIN);
-        mainForm.addColumn(Widget.widget(column).setWidgetType(Widget.SELECT_WIDGET_TYPE));
+        mainForm.addColumn(Widget.widget(column).setWidgetType(Widget.ENUMERATION_WIDGET_TYPE));
         mainForm.addColumn(Widget.widget(dbtype).setWidgetType(Widget.ENUMERATION_WIDGET_TYPE));
     }
 

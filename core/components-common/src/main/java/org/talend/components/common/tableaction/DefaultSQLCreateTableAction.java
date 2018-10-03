@@ -19,7 +19,9 @@ import org.talend.daikon.avro.SchemaConstants;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DefaultSQLCreateTableAction extends TableAction {
 
@@ -36,6 +38,11 @@ public class DefaultSQLCreateTableAction extends TableAction {
 
     public DefaultSQLCreateTableAction(final String[] fullTableName, final Schema schema, boolean createIfNotExists, boolean drop,
             boolean dropIfExists) {
+        this(fullTableName, schema, createIfNotExists, drop, dropIfExists, new HashMap<String, String>());
+    }
+
+    public DefaultSQLCreateTableAction(final String[] fullTableName, final Schema schema, boolean createIfNotExists, boolean drop,
+        boolean dropIfExists, Map<String, String> manualDBType) {
         if (fullTableName == null || fullTableName.length < 1) {
             throw new InvalidParameterException("Table name can't be null or empty");
         }
@@ -44,12 +51,8 @@ public class DefaultSQLCreateTableAction extends TableAction {
         this.schema = schema;
         this.createIfNotExists = createIfNotExists;
 
-        this.drop = drop;
+        this.drop = drop || dropIfExists;
         this.dropIfExists = dropIfExists;
-        if(dropIfExists){
-            this.drop = true;
-        }
-
     }
 
     @Override
@@ -134,6 +137,11 @@ public class DefaultSQLCreateTableAction extends TableAction {
             }
             sb.append(escape(updateCaseIdentifier(name)));
             sb.append(" ");
+
+            if(isNullOrEmpty(sDBType)){
+                // if SchemaConstants.TALEND_COLUMN_DB_TYPE not set, use given map
+                sDBType = this.getDbTypeMap().get(f.name());
+            }
 
             if (isNullOrEmpty(sDBType)) {
                 // If DB type not set, try to guess it

@@ -66,6 +66,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
 
     public Property<Boolean> convertColumnsAndTableToUppercase = newBoolean("convertColumnsAndTableToUppercase");
 
+    public Property<Boolean> usePersonalDBType = newBoolean("usePersonalDBType");
     public SnowflakeDbTypeProperties dbtypeTable = new SnowflakeDbTypeProperties("dbtypeTable");
 
     public Property<Boolean> convertEmptyStringsToNull = newBoolean("convertEmptyStringsToNull");
@@ -141,7 +142,11 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         mainForm.addRow(tableAction);
         mainForm.addRow(outputAction);
         mainForm.addColumn(widget(upsertKeyColumn).setWidgetType(Widget.ENUMERATION_WIDGET_TYPE));
-        mainForm.addRow(new Widget(dbtypeTable).setWidgetType(Widget.TABLE_WIDGET_TYPE));
+        mainForm.addRow(usePersonalDBType);
+
+        Widget dbTypeTableWidget = new Widget(dbtypeTable);
+        mainForm.addRow(dbTypeTableWidget.setWidgetType(Widget.TABLE_WIDGET_TYPE));
+        dbTypeTableWidget.setHidden(true);
 
         Form advancedForm = getForm(Form.ADVANCED);
         advancedForm.addRow(convertColumnsAndTableToUppercase);
@@ -158,6 +163,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         if (form.getName().equals(Form.MAIN)) {
             Form advForm = getForm(Form.ADVANCED);
             if (advForm != null) {
+                form.getWidget(dbtypeTable.getName()).setHidden(!usePersonalDBType.getValue());
                 boolean isUpsert = OutputAction.UPSERT.equals(outputAction.getValue());
                 form.getWidget(upsertKeyColumn.getName()).setHidden(!isUpsert);
                 if (isUpsert) {
@@ -184,6 +190,9 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         }
     }
 
+    public void afterUsePersonalDBType(){
+        refreshLayout(getForm(Form.MAIN));
+    }
 
     private void addSchemaField(String name, List<Schema.Field> fields) {
         Schema.Field field = new Schema.Field(name, Schema.create(Schema.Type.STRING), null, (Object) null);
