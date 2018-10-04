@@ -64,7 +64,6 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
     public static final TypeLiteral<List<String>> LIST_STRING_TYPE = new TypeLiteral<List<String>>() {};
 
     public Property<List<String>> column = newProperty(LIST_STRING_TYPE, "column");
-
     public Property<List<String>> dbtype = newProperty(LIST_STRING_TYPE, "dbtype");
 
     public SnowflakeDbTypeProperties(String name) {
