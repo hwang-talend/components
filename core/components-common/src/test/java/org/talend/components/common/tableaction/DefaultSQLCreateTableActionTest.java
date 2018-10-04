@@ -8,7 +8,9 @@ import org.junit.Test;
 import org.talend.daikon.avro.AvroUtils;
 import org.talend.daikon.avro.SchemaConstants;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -268,6 +270,35 @@ public class DefaultSQLCreateTableActionTest {
                     new DefaultSQLCreateTableAction(new String[]{}, schema, false, false, false);
             fail("Should fail since table name is empty.");
         } catch (Exception e) {
+        }
+    }
+
+    @Test
+    public void createTableWithDBType() {
+        DefaultSQLCreateTableAction action =
+                new DefaultSQLCreateTableAction(new String[] { "MyTable" }, schema, false, false, true);
+        TableActionConfig conf = new TableActionConfig();
+        conf.SQL_ESCAPE_ENABLED = false;
+        conf.SQL_DROP_TABLE_SUFFIX = " CASCADE";
+        conf.SQL_UPPERCASE_IDENTIFIER = true;
+        action.setConfig(conf);
+
+        Map<String, String> dbTypeMap = new HashMap<>();
+        dbTypeMap.put("id", "MY_ID_TYPE");
+        dbTypeMap.put("name", "MY_NAME_TYPE");
+        dbTypeMap.put("date", "MY_DATE_TYPE");
+        dbTypeMap.put("salary", "MY_SALARY_TYPE"); // Already set in schema, should not be taken in account
+        action.setDbTypeMap(dbTypeMap);
+
+        try {
+            List<String> queries = action.getQueries();
+            assertEquals(2, queries.size());
+            assertEquals("DROP TABLE IF EXISTS MYTABLE CASCADE", queries.get(0));
+            assertEquals(
+                    "CREATE TABLE MYTABLE (ID MY_ID_TYPE, NAME MY_NAME_TYPE(255) DEFAULT \"ok\", DATE MY_DATE_TYPE, SALARY MY_DOUBLE(38, 4), UPDATED TIMESTAMP, CONSTRAINT pk_MYTABLE PRIMARY KEY (ID, NAME))",
+                    queries.get(1));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

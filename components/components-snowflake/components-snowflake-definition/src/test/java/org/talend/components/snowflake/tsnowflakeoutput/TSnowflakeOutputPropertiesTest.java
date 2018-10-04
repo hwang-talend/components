@@ -84,20 +84,27 @@ public class TSnowflakeOutputPropertiesTest {
         defaultConvertColumnsAndTableToUppercase = outputProperties.convertColumnsAndTableToUppercase.getValue();
         tableAction = outputProperties.tableAction.getValue();
 
+        boolean defaultUsePersonalDBType = outputProperties.usePersonalDBType.getValue();
+        List<String> defaultDBTypeColumns = outputProperties.dbtypeTable.column.getValue();
+        List<String> defaultDBTypeType = outputProperties.dbtypeTable.dbtype.getValue();
+
         assertEquals(defaultValueOutputAction, OutputAction.INSERT);
         assertTrue(defaultConvertColumnsAndTableToUppercase);
         assertEquals(TableAction.TableActionEnum.NONE, tableAction);
+
+        assertFalse(defaultUsePersonalDBType);
+        assertEquals(0, defaultDBTypeColumns.size());
+        assertEquals(0, defaultDBTypeType.size());
     }
 
     @Test
     public void testTriggers() {
-        Form main;
-        boolean isOutputActionCalledAfter;
-
-        main = outputProperties.getForm(Form.MAIN);
-        isOutputActionCalledAfter = main.getWidget(outputProperties.outputAction).isCallAfter();
+        Form main = outputProperties.getForm(Form.MAIN);
+        boolean isOutputActionCalledAfter = main.getWidget(outputProperties.outputAction).isCallAfter();
+        boolean isUsePersonalDBTypeAfter = main.getWidget(outputProperties.usePersonalDBType).isCallAfter();
 
         assertTrue(isOutputActionCalledAfter);
+        assertTrue(isUsePersonalDBTypeAfter);
     }
 
     @Test
@@ -211,7 +218,8 @@ public class TSnowflakeOutputPropertiesTest {
         Assert.assertTrue(outputProperties.schemaReject.schema.getValue().getFields().isEmpty());
         outputProperties.table.schemaListener.afterSchema();
         Assert.assertEquals(9, outputProperties.schemaReject.schema.getValue().getFields().size());
-
+        Assert.assertEquals(1, outputProperties.dbtypeTable.column.getPossibleValues().size());
+        Assert.assertEquals("id", outputProperties.dbtypeTable.column.getPossibleValues().get(0));
     }
 
 }

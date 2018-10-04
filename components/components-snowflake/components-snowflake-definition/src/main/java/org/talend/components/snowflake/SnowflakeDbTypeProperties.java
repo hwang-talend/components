@@ -80,6 +80,9 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
             optionPossibleValues.add(possibleValue.name());
         }
         dbtype.setPossibleValues(optionPossibleValues);
+        column.setPossibleValues(Collections.EMPTY_LIST);
+        column.setValue(Collections.EMPTY_LIST);
+        dbtype.setValue(Collections.EMPTY_LIST);
     }
 
     @Override
