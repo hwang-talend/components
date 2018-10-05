@@ -97,22 +97,4 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
         this.column.setPossibleValues(names);
     }
 
-
-
-    /*private boolean isValideDbType() {
-        if (column.getValue() == null || column.getValue().isEmpty() || dbtype.getValue() == null || dbtype.getValue()
-                .isEmpty()) {
-            return false;
-        }
-
-        int tableSize = column.getValue().size();
-        for (int i = 0; i < tableSize; i++) {
-            if (StringUtils.isEmpty(column.getValue().get(i)) || StringUtils.isEmpty(dbtype.getValue().get(i))) {
-                return false;
-            }
-        }
-
-        return true;
-    }*/
-
 }
