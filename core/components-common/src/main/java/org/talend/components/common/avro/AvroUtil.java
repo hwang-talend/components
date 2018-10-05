@@ -14,7 +14,6 @@ package org.talend.components.common.avro;
 
 public class AvroUtil {
 
-    public final static char SUBSTITUTE_FIRST_CHAR = '_';
     public final static char SUBSTITUTE_CHAR = '_';
 
     private AvroUtil(){}
@@ -30,16 +29,11 @@ public class AvroUtil {
      * @return Acceptable name
      */
     public static String getAcceptableName(String name){
-        if(name == null){
-            return null;
-        }
-
-        if(name.trim().isEmpty()){
+        if(name == null || name.trim().isEmpty()){
             return name;
         }
 
         name = name.trim();
-
         StringBuilder newName = new StringBuilder();
         for (int i = 0; i < name.length(); i++) {
             char c = name.charAt(i);
@@ -48,7 +42,7 @@ public class AvroUtil {
 
         char first = newName.charAt(0);
         if (!(Character.isLetter(first) || first == '_')) {
-            newName.insert(0, SUBSTITUTE_FIRST_CHAR);
+            newName.insert(0, SUBSTITUTE_CHAR);
         }
         return newName.toString();
     }
