@@ -132,7 +132,7 @@ public class JDBCAvroRegistry extends AvroRegistry {
                 fields.add(field);
             } while (metadata.next());
 
-            return Schema.createRecord(tablename, null, null, false, fields);
+            return Schema.createRecord(AvroUtil.getAcceptableName(tablename), null, null, false, fields);
         }
     }
 
