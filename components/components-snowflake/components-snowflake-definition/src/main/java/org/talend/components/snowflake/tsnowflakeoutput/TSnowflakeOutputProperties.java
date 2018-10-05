@@ -27,6 +27,7 @@ import org.talend.components.api.component.Connector;
 import org.talend.components.api.component.ISchemaListener;
 import org.talend.components.api.component.PropertyPathConnector;
 import org.talend.components.common.SchemaProperties;
+import org.talend.components.common.tableaction.TableAction;
 import org.talend.components.snowflake.SnowflakeConnectionTableProperties;
 import org.talend.components.snowflake.SnowflakeTableProperties;
 import org.talend.daikon.avro.SchemaConstants;
@@ -40,6 +41,8 @@ import org.talend.daikon.serialize.migration.SerializeSetVersion;
 public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperties implements SerializeSetVersion {
 
     private static final int CONVERT_COLUMNS_AND_TABLE_TO_UPPERCASE_VERSION = 1;
+    private static final int TABLE_ACTION_VERSION = 2;
+    private static final int CONVERT_EMPTY_STRINGS_TO_NULL_VERSION = 3;
 
     public enum OutputAction {
         INSERT,
@@ -47,6 +50,8 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         UPSERT,
         DELETE
     }
+
+    public Property<TableAction.TableActionEnum> tableAction = newEnum("tableAction", TableAction.TableActionEnum.class);
 
     public Property<OutputAction> outputAction = newEnum("outputAction", OutputAction.class); // $NON-NLS-1$
 
@@ -59,6 +64,8 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     public SchemaProperties schemaReject = new SchemaProperties("schemaReject"); //$NON-NLS-1$
 
     public Property<Boolean> convertColumnsAndTableToUppercase = newBoolean("convertColumnsAndTableToUppercase");
+
+    public Property<Boolean> convertEmptyStringsToNull = newBoolean("convertEmptyStringsToNull");
 
     // Have to use an explicit class to get the override of afterTableName(), an anonymous
     // class cannot be public and thus cannot be called.
@@ -98,6 +105,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     public void setupProperties() {
         super.setupProperties();
 
+        tableAction.setValue(TableAction.TableActionEnum.NONE);
         outputAction.setValue(OutputAction.INSERT);
         ISchemaListener listener;
 
@@ -120,17 +128,20 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         table.setupProperties();
 
         convertColumnsAndTableToUppercase.setValue(true);
+        convertEmptyStringsToNull.setValue(false);
     }
 
     @Override
     public void setupLayout() {
         super.setupLayout();
         Form mainForm = getForm(Form.MAIN);
+        mainForm.addRow(tableAction);
         mainForm.addRow(outputAction);
         mainForm.addColumn(widget(upsertKeyColumn).setWidgetType(Widget.ENUMERATION_WIDGET_TYPE));
 
         Form advancedForm = getForm(Form.ADVANCED);
         advancedForm.addRow(convertColumnsAndTableToUppercase);
+        advancedForm.addRow(convertEmptyStringsToNull);
     }
 
     public void afterOutputAction() {
@@ -140,7 +151,6 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     @Override
     public void refreshLayout(Form form) {
         super.refreshLayout(form);
-
         if (form.getName().equals(Form.MAIN)) {
             Form advForm = getForm(Form.ADVANCED);
             if (advForm != null) {
@@ -221,16 +231,33 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
 
     @Override
     public int getVersionNumber() {
-        return 1;
+        return 3;
     }
 
     @Override
     public boolean postDeserialize(int version, PostDeserializeSetup setup, boolean persistent) {
         boolean migrated = super.postDeserialize(version, setup, persistent);
+        boolean migratedProperties = migrateProperties(version);
+        return migrated || migratedProperties;
+    }
+
+    protected boolean migrateProperties(int version) {
+        boolean migrated = false;
         if (version < CONVERT_COLUMNS_AND_TABLE_TO_UPPERCASE_VERSION) {
             convertColumnsAndTableToUppercase.setValue(false);
             migrated = true;
         }
+
+        if(version < TABLE_ACTION_VERSION) {
+            tableAction.setValue(TableAction.TableActionEnum.NONE);
+            migrated = true;
+        }
+
+        if (version < CONVERT_EMPTY_STRINGS_TO_NULL_VERSION) {
+            convertEmptyStringsToNull.setValue(true);
+            migrated = true;
+        }
         return migrated;
     }
+
 }
