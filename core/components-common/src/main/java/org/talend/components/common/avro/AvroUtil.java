@@ -14,8 +14,6 @@ package org.talend.components.common.avro;
 
 public class AvroUtil {
 
-    public final static String NULL_NAME = "null_name";
-    public final static String EMPTY_NAME = "empty_name";
     public final static char SUBSTITUTE_FIRST_CHAR = '_';
     public final static char SUBSTITUTE_CHAR = '_';
 
@@ -33,14 +31,14 @@ public class AvroUtil {
      */
     public static String getAcceptableName(String name){
         if(name == null){
-            return NULL_NAME;
+            return null;
+        }
+
+        if(name.trim().isEmpty()){
+            return name;
         }
 
         name = name.trim();
-
-        if(name.isEmpty()){
-            return EMPTY_NAME;
-        }
 
         StringBuilder newName = new StringBuilder();
         for (int i = 0; i < name.length(); i++) {
