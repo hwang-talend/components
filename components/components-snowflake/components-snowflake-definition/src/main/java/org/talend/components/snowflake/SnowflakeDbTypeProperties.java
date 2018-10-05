@@ -70,16 +70,22 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
         super(name);
     }
 
+    private List<String> getDbTypePossibleValues(){
+        List<String> optionPossibleValues = new ArrayList<String>();
+        for (SNOWFLAKE_DBTYPE possibleValue : SNOWFLAKE_DBTYPE.values()) {
+            optionPossibleValues.add(possibleValue.name());
+        }
+
+        return optionPossibleValues;
+    }
+
     @Override
     public void setupProperties() {
         super.setupProperties();
         column.setValue(Collections.<String>emptyList());
 
-        List<String> optionPossibleValues = new ArrayList<String>();
-        for (SNOWFLAKE_DBTYPE possibleValue : SNOWFLAKE_DBTYPE.values()) {
-            optionPossibleValues.add(possibleValue.name());
-        }
-        dbtype.setPossibleValues(optionPossibleValues);
+
+        dbtype.setPossibleValues(getDbTypePossibleValues());
         column.setPossibleValues(Collections.EMPTY_LIST);
         column.setValue(Collections.EMPTY_LIST);
         dbtype.setValue(Collections.EMPTY_LIST);
@@ -94,6 +100,7 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
     }
 
     public void setFieldNames(List<String> names){
+        this.dbtype.setPossibleValues(getDbTypePossibleValues()); // Needed for existing component that don't have yet this option
         this.column.setPossibleValues(names);
     }
 
