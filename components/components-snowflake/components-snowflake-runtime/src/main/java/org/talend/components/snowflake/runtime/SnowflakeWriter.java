@@ -180,7 +180,7 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
         }
     }
 
-    private Map<String, String> getDbTypeMap(Schema schema){
+    private Map<String, String> getDbTypeMap(){
         Map<String, String> dbTypeMap = new HashMap<>();
 
         if(!sprops.usePersonalDBType.getValue()){
@@ -215,7 +215,7 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
                     schemaForCreateTable = ((GenericData.Record) datum).getSchema();
                 }
 
-                Map<String, String> dbTypeMap = getDbTypeMap(schemaForCreateTable);
+                Map<String, String> dbTypeMap = getDbTypeMap();
                 TableActionManager.exec(processingConnection, selectedTableAction,
                         new String[] { connectionProperties1.db.getValue(), connectionProperties1.schemaName.getValue(),
                                 sprops.getTableName() }, schemaForCreateTable, conf, dbTypeMap);
