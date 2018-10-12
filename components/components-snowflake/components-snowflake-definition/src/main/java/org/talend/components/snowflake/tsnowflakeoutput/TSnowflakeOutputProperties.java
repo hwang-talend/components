@@ -44,6 +44,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     private static final int CONVERT_COLUMNS_AND_TABLE_TO_UPPERCASE_VERSION = 1;
     private static final int TABLE_ACTION_VERSION = 2;
     private static final int CONVERT_EMPTY_STRINGS_TO_NULL_VERSION = 3;
+    private static final int DB_TYPE_SELECTION_VERSION = 3;
 
     public enum OutputAction {
         INSERT,
@@ -157,13 +158,22 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         refreshLayout(getForm(Form.MAIN));
     }
 
+    public void afterTableAction() {
+        refreshLayout(getForm(Form.MAIN));
+    }
+
     @Override
     public void refreshLayout(Form form) {
         super.refreshLayout(form);
         if (form.getName().equals(Form.MAIN)) {
+
+            TableAction.TableActionEnum tableAction = this.tableAction.getValue();
+            boolean isCreateTableAction = tableAction != null && tableAction.isCreateTableAction();
+            form.getWidget(dbtypeTable.getName()).setVisible(usePersonalDBType.getValue() && isCreateTableAction);
+            form.getWidget(usePersonalDBType.getName()).setVisible(isCreateTableAction);
+
             Form advForm = getForm(Form.ADVANCED);
             if (advForm != null) {
-                form.getWidget(dbtypeTable.getName()).setHidden(!usePersonalDBType.getValue());
                 boolean isUpsert = OutputAction.UPSERT.equals(outputAction.getValue());
                 form.getWidget(upsertKeyColumn.getName()).setHidden(!isUpsert);
                 if (isUpsert) {
@@ -246,7 +256,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
 
     @Override
     public int getVersionNumber() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -272,6 +282,12 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
             convertEmptyStringsToNull.setValue(true);
             migrated = true;
         }
+
+        if(version < DB_TYPE_SELECTION_VERSION) {
+            usePersonalDBType.setValue(false);
+            migrated = true;
+        }
+
         return migrated;
     }
 

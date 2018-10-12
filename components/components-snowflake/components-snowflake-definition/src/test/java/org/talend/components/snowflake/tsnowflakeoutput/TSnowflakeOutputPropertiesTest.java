@@ -61,10 +61,16 @@ public class TSnowflakeOutputPropertiesTest {
         isOutputActionPropertyVisible = main.getWidget(outputProperties.outputAction).isVisible();
         isUpsertKeyColumnVisible = main.getWidget(outputProperties.upsertKeyColumn).isVisible();
         isTableActionProperyVisible = main.getWidget(outputProperties.tableAction).isVisible();
-
+        boolean usePersonalDBTypePropertyVisible = main.getWidget(outputProperties.usePersonalDBType).isVisible();
+        boolean isDbTypePropertyVisible = main.getWidget(outputProperties.dbtypeTable).isVisible();
 
         outputProperties.outputAction.setValue(OutputAction.UPSERT);
-        outputProperties.refreshLayout(main);
+        outputProperties.afterOutputAction();
+        outputProperties.tableAction.setValue(TableAction.TableActionEnum.CREATE);
+        outputProperties.afterTableAction();
+
+        boolean usePersonalDBTypePropertyVisibleIfCreateAction = main.getWidget(outputProperties.usePersonalDBType).isVisible();
+        boolean isDbTypePropertyVisibleIfCreateAction = main.getWidget(outputProperties.dbtypeTable).isVisible();
 
         isUpsertKeyColumnVisibleWhenOutputActionIsUpsert = main.getWidget(outputProperties.upsertKeyColumn).isVisible();
 
@@ -72,6 +78,10 @@ public class TSnowflakeOutputPropertiesTest {
         assertFalse(isUpsertKeyColumnVisible);
         assertTrue(isUpsertKeyColumnVisibleWhenOutputActionIsUpsert);
         assertTrue(isTableActionProperyVisible);
+        assertFalse(usePersonalDBTypePropertyVisible);
+        assertFalse(isDbTypePropertyVisible);
+        assertTrue(usePersonalDBTypePropertyVisibleIfCreateAction);
+        assertFalse(isDbTypePropertyVisibleIfCreateAction);
     }
 
     @Test

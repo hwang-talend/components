@@ -9,13 +9,22 @@ import java.util.Map;
 public abstract class TableAction {
 
     public static enum TableActionEnum {
-        NONE,
-        DROP_CREATE,
-        CREATE,
-        CREATE_IF_NOT_EXISTS,
-        DROP_IF_EXISTS_AND_CREATE,
-        CLEAR,
-        TRUNCATE
+        NONE(false),
+        DROP_CREATE(true),
+        CREATE(true),
+        CREATE_IF_NOT_EXISTS(true),
+        DROP_IF_EXISTS_AND_CREATE(true),
+        CLEAR(false),
+        TRUNCATE(false);
+
+        boolean create;
+        TableActionEnum(boolean create){
+            this.create = create;
+        }
+
+        public boolean isCreateTableAction(){
+            return create;
+        }
     }
 
     private TableActionConfig config = new TableActionConfig();
