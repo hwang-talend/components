@@ -29,7 +29,7 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
 
     private static final long serialVersionUID = 1L;
 
-    public enum SNOWFLAKE_DBTYPE {
+    private enum SNOWFLAKE_DBTYPE {
         ARRAY,
         BIGINT,
         BINARY,
@@ -66,29 +66,35 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
     public Property<List<String>> column = newProperty(LIST_STRING_TYPE, "column");
     public Property<List<String>> dbtype = newProperty(LIST_STRING_TYPE, "dbtype");
 
+    private List<String> dbTypePossibleValues = null;
+    private List<String> columnPossibleValues = new ArrayList<>();
+
     public SnowflakeDbTypeProperties(String name) {
         super(name);
     }
 
     private List<String> getDbTypePossibleValues(){
-        List<String> optionPossibleValues = new ArrayList<String>();
-        for (SNOWFLAKE_DBTYPE possibleValue : SNOWFLAKE_DBTYPE.values()) {
-            optionPossibleValues.add(possibleValue.name());
+        if(dbTypePossibleValues != null) {
+            return dbTypePossibleValues;
         }
 
-        return optionPossibleValues;
+        dbTypePossibleValues = new ArrayList<String>();
+        for (SNOWFLAKE_DBTYPE possibleValue : SNOWFLAKE_DBTYPE.values()) {
+            dbTypePossibleValues.add(possibleValue.name());
+        }
+
+        return dbTypePossibleValues;
     }
 
     @Override
     public void setupProperties() {
         super.setupProperties();
-        column.setValue(Collections.<String>emptyList());
 
-
-        dbtype.setPossibleValues(getDbTypePossibleValues());
+        setFieldNames(Collections.EMPTY_LIST);
+        /*dbtype.setPossibleValues(getDbTypePossibleValues());
         column.setPossibleValues(Collections.EMPTY_LIST);
         column.setValue(Collections.EMPTY_LIST);
-        dbtype.setValue(Collections.EMPTY_LIST);
+        dbtype.setValue(Collections.EMPTY_LIST);*/
     }
 
     @Override
@@ -99,9 +105,25 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
         mainForm.addColumn(Widget.widget(dbtype).setWidgetType(Widget.ENUMERATION_WIDGET_TYPE));
     }
 
-    public void setFieldNames(List<String> names){
-        this.dbtype.setPossibleValues(getDbTypePossibleValues()); // Needed for existing component that don't have yet this option
-        this.column.setPossibleValues(names);
+
+
+    public void setFieldNames(List<String> names) {
+        this.columnPossibleValues.clear();
+        if(names != null){
+            this.columnPossibleValues.addAll(names);
+        }
+        this.updatePossibleValues();
+    }
+
+    private void updatePossibleValues(){
+        this.column.setPossibleValues(columnPossibleValues);
+        if(columnPossibleValues.isEmpty()){
+            dbtype.setValue(null);
+        }
+
+        if(this.dbtype.getPossibleValues() == null || this.dbtype.getPossibleValues().isEmpty()){
+            this.dbtype.setPossibleValues(getDbTypePossibleValues());
+        }
     }
 
 }

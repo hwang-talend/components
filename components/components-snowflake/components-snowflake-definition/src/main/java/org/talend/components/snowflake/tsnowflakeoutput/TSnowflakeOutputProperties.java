@@ -44,7 +44,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     private static final int CONVERT_COLUMNS_AND_TABLE_TO_UPPERCASE_VERSION = 1;
     private static final int TABLE_ACTION_VERSION = 2;
     private static final int CONVERT_EMPTY_STRINGS_TO_NULL_VERSION = 3;
-    private static final int DB_TYPE_SELECTION_VERSION = 3;
+    private static final int DB_TYPE_SELECTION_VERSION = 4;
 
     public enum OutputAction {
         INSERT,
@@ -134,6 +134,9 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
 
         convertColumnsAndTableToUppercase.setValue(true);
         convertEmptyStringsToNull.setValue(false);
+
+        usePersonalDBType.setValue(false);
+
     }
 
     @Override
@@ -143,11 +146,13 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         mainForm.addRow(tableAction);
         mainForm.addRow(outputAction);
         mainForm.addColumn(widget(upsertKeyColumn).setWidgetType(Widget.ENUMERATION_WIDGET_TYPE));
+
         mainForm.addRow(usePersonalDBType);
+        widget(usePersonalDBType).setVisible(false);
 
         Widget dbTypeTableWidget = new Widget(dbtypeTable);
         mainForm.addRow(dbTypeTableWidget.setWidgetType(Widget.TABLE_WIDGET_TYPE));
-        dbTypeTableWidget.setHidden(true);
+        dbTypeTableWidget.setVisible(false);
 
         Form advancedForm = getForm(Form.ADVANCED);
         advancedForm.addRow(convertColumnsAndTableToUppercase);
@@ -169,6 +174,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
 
             TableAction.TableActionEnum tableAction = this.tableAction.getValue();
             boolean isCreateTableAction = tableAction != null && tableAction.isCreateTableAction();
+
             form.getWidget(dbtypeTable.getName()).setVisible(usePersonalDBType.getValue() && isCreateTableAction);
             form.getWidget(usePersonalDBType.getName()).setVisible(isCreateTableAction);
 
@@ -194,9 +200,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
 
     public void beforeUpsertKeyColumn() {
         if (getSchema() != null) {
-            List<String> fieldNames = getFieldNames(table.main.schema);
-            upsertKeyColumn.setPossibleValues(fieldNames);
-            dbtypeTable.setFieldNames(fieldNames);
+            upsertKeyColumn.setPossibleValues(getFieldNames(table.main.schema));
         }
     }
 
@@ -252,6 +256,8 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
     public void afterMainSchema() {
         updateOutputSchemas();
         beforeUpsertKeyColumn();
+        dbtypeTable.setFieldNames(getFieldNames(table.main.schema));
+        refreshLayout(getForm(Form.MAIN));
     }
 
     @Override
