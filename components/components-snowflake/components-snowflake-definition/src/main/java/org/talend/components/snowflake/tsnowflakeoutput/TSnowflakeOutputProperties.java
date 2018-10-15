@@ -147,16 +147,16 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         mainForm.addRow(outputAction);
         mainForm.addColumn(widget(upsertKeyColumn).setWidgetType(Widget.ENUMERATION_WIDGET_TYPE));
 
-        mainForm.addRow(usePersonalDBType);
-        widget(usePersonalDBType).setVisible(false);
-
-        Widget dbTypeTableWidget = new Widget(dbtypeTable);
-        mainForm.addRow(dbTypeTableWidget.setWidgetType(Widget.TABLE_WIDGET_TYPE));
-        dbTypeTableWidget.setVisible(false);
-
         Form advancedForm = getForm(Form.ADVANCED);
         advancedForm.addRow(convertColumnsAndTableToUppercase);
         advancedForm.addRow(convertEmptyStringsToNull);
+
+        advancedForm.addRow(usePersonalDBType);
+        widget(usePersonalDBType).setVisible(false);
+
+        Widget dbTypeTableWidget = new Widget(dbtypeTable);
+        advancedForm.addRow(dbTypeTableWidget.setWidgetType(Widget.TABLE_WIDGET_TYPE));
+        dbTypeTableWidget.setVisible(false);
     }
 
     public void afterOutputAction() {
@@ -175,11 +175,11 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
             TableAction.TableActionEnum tableAction = this.tableAction.getValue();
             boolean isCreateTableAction = tableAction != null && tableAction.isCreateTableAction();
 
-            form.getWidget(dbtypeTable.getName()).setVisible(usePersonalDBType.getValue() && isCreateTableAction);
-            form.getWidget(usePersonalDBType.getName()).setVisible(isCreateTableAction);
-
             Form advForm = getForm(Form.ADVANCED);
             if (advForm != null) {
+                advForm.getWidget(dbtypeTable.getName()).setVisible(usePersonalDBType.getValue() && isCreateTableAction);
+                advForm.getWidget(usePersonalDBType.getName()).setVisible(isCreateTableAction);
+
                 boolean isUpsert = OutputAction.UPSERT.equals(outputAction.getValue());
                 form.getWidget(upsertKeyColumn.getName()).setHidden(!isUpsert);
                 if (isUpsert) {
