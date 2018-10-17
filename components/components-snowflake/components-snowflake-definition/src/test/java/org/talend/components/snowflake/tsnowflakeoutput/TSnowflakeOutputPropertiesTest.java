@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.talend.components.api.component.PropertyPathConnector;
 import org.talend.components.common.tableaction.TableAction;
+import org.talend.components.snowflake.SnowflakeDbTypeProperties;
 import org.talend.components.snowflake.tsnowflakeoutput.TSnowflakeOutputProperties.OutputAction;
 import org.talend.daikon.avro.AvroUtils;
 import org.talend.daikon.avro.SchemaConstants;
@@ -96,7 +97,7 @@ public class TSnowflakeOutputPropertiesTest {
 
         boolean defaultUsePersonalDBType = outputProperties.usePersonalDBType.getValue();
         List<String> defaultDBTypeColumns = outputProperties.dbtypeTable.column.getValue();
-        List<String> defaultDBTypeType = outputProperties.dbtypeTable.dbtype.getValue();
+        List<SnowflakeDbTypeProperties.SNOWFLAKE_DBTYPE> defaultDBTypeType = outputProperties.dbtypeTable.dbtype.getValue();
 
         assertEquals(defaultValueOutputAction, OutputAction.INSERT);
         assertTrue(defaultConvertColumnsAndTableToUppercase);

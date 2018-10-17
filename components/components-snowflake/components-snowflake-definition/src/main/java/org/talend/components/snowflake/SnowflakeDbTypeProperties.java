@@ -29,7 +29,7 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
 
     private static final long serialVersionUID = 1L;
 
-    private enum SNOWFLAKE_DBTYPE {
+    public enum SNOWFLAKE_DBTYPE {
         ARRAY,
         BIGINT,
         BINARY,
@@ -62,39 +62,22 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
     }
 
     public static final TypeLiteral<List<String>> LIST_STRING_TYPE = new TypeLiteral<List<String>>() {};
+    public static final TypeLiteral<List<SNOWFLAKE_DBTYPE>> LIST_SNOWFLAKE_DBTYPE_TYPE = new TypeLiteral<List<SNOWFLAKE_DBTYPE>>() {};
 
     public Property<List<String>> column = newProperty(LIST_STRING_TYPE, "column");
-    public Property<List<String>> dbtype = newProperty(LIST_STRING_TYPE, "dbtype");
+    public Property<List<SNOWFLAKE_DBTYPE>> dbtype = newProperty(LIST_SNOWFLAKE_DBTYPE_TYPE, "dbtype");
 
-    private List<String> dbTypePossibleValues = null;
+    private List<SNOWFLAKE_DBTYPE> dbTypePossibleValues = null;
     private List<String> columnPossibleValues = new ArrayList<>();
 
     public SnowflakeDbTypeProperties(String name) {
         super(name);
     }
 
-    private List<String> getDbTypePossibleValues(){
-        if(dbTypePossibleValues != null) {
-            return dbTypePossibleValues;
-        }
-
-        dbTypePossibleValues = new ArrayList<String>();
-        for (SNOWFLAKE_DBTYPE possibleValue : SNOWFLAKE_DBTYPE.values()) {
-            dbTypePossibleValues.add(possibleValue.name());
-        }
-
-        return dbTypePossibleValues;
-    }
-
     @Override
     public void setupProperties() {
         super.setupProperties();
-
         setFieldNames(Collections.EMPTY_LIST);
-        /*dbtype.setPossibleValues(getDbTypePossibleValues());
-        column.setPossibleValues(Collections.EMPTY_LIST);
-        column.setValue(Collections.EMPTY_LIST);
-        dbtype.setValue(Collections.EMPTY_LIST);*/
     }
 
     @Override
@@ -122,7 +105,7 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
         }
 
         if(this.dbtype.getPossibleValues() == null || this.dbtype.getPossibleValues().isEmpty()){
-            this.dbtype.setPossibleValues(getDbTypePossibleValues());
+            this.dbtype.setPossibleValues(SNOWFLAKE_DBTYPE.values());
         }
     }
 
