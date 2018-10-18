@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.components.snowflake;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.TypeLiteral;
 import org.talend.components.api.properties.ComponentPropertiesImpl;
 import org.talend.daikon.properties.presentation.Form;
@@ -29,7 +28,7 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
 
     private static final long serialVersionUID = 1L;
 
-    public enum SNOWFLAKE_DBTYPE {
+    private enum SNOWFLAKE_DBTYPE {
         ARRAY,
         BIGINT,
         BINARY,
@@ -61,13 +60,18 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
         VARIANT
     }
 
+    private static final List<String> dbTypePossibleValues = new ArrayList<>();
+    static {
+        for(SNOWFLAKE_DBTYPE e : SNOWFLAKE_DBTYPE.values()){
+            dbTypePossibleValues.add(e.name());
+        }
+    }
+
     public static final TypeLiteral<List<String>> LIST_STRING_TYPE = new TypeLiteral<List<String>>() {};
-    public static final TypeLiteral<List<SNOWFLAKE_DBTYPE>> LIST_SNOWFLAKE_DBTYPE_TYPE = new TypeLiteral<List<SNOWFLAKE_DBTYPE>>() {};
 
     public Property<List<String>> column = newProperty(LIST_STRING_TYPE, "column");
-    public Property<List<SNOWFLAKE_DBTYPE>> dbtype = newProperty(LIST_SNOWFLAKE_DBTYPE_TYPE, "dbtype");
+    public Property<List<String>> dbtype = newProperty(LIST_STRING_TYPE, "dbtype");
 
-    private List<SNOWFLAKE_DBTYPE> dbTypePossibleValues = null;
     private List<String> columnPossibleValues = new ArrayList<>();
 
     public SnowflakeDbTypeProperties(String name) {
@@ -105,7 +109,7 @@ public class SnowflakeDbTypeProperties extends ComponentPropertiesImpl  {
         }
 
         if(this.dbtype.getPossibleValues() == null || this.dbtype.getPossibleValues().isEmpty()){
-            this.dbtype.setPossibleValues(SNOWFLAKE_DBTYPE.values());
+            this.dbtype.setPossibleValues(dbTypePossibleValues);
         }
     }
 

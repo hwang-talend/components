@@ -189,10 +189,10 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
         }
 
         List<String> columns = sprops.dbtypeTable.column.getValue();
-        List<SnowflakeDbTypeProperties.SNOWFLAKE_DBTYPE> dbTypes = sprops.dbtypeTable.dbtype.getValue();
+        List<String> dbTypes = sprops.dbtypeTable.dbtype.getValue();
 
         for(int i = 0; i<columns.size(); i++){
-            dbTypeMap.put(columns.get(i), dbTypes.get(i).name());
+            dbTypeMap.put(columns.get(i), dbTypes.get(i));
         }
 
         return dbTypeMap;
