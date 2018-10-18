@@ -37,6 +37,7 @@ import org.talend.components.common.runtime.DynamicSchemaUtils;
 import org.talend.components.common.tableaction.TableActionConfig;
 import org.talend.components.common.tableaction.TableActionManager;
 import org.talend.components.snowflake.SnowflakeConnectionProperties;
+import org.talend.components.snowflake.SnowflakeDbTypeProperties;
 import org.talend.components.snowflake.runtime.tableaction.SnowflakeTableActionConfig;
 import org.talend.components.snowflake.runtime.utils.SchemaResolver;
 import org.talend.components.snowflake.tsnowflakeoutput.TSnowflakeOutputProperties;
@@ -188,10 +189,10 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
         }
 
         List<String> columns = sprops.dbtypeTable.column.getValue();
-        List<String> dbTypes = sprops.dbtypeTable.dbtype.getValue();
+        List<SnowflakeDbTypeProperties.SNOWFLAKE_DBTYPE> dbTypes = sprops.dbtypeTable.dbtype.getValue();
 
         for(int i = 0; i<columns.size(); i++){
-            dbTypeMap.put(columns.get(i), dbTypes.get(i));
+            dbTypeMap.put(columns.get(i), dbTypes.get(i).name());
         }
 
         return dbTypeMap;

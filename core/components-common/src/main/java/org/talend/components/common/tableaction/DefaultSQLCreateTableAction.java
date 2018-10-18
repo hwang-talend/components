@@ -37,12 +37,7 @@ public class DefaultSQLCreateTableAction extends TableAction {
     private boolean dropIfExists;
 
     public DefaultSQLCreateTableAction(final String[] fullTableName, final Schema schema, boolean createIfNotExists, boolean drop,
-            boolean dropIfExists) {
-        this(fullTableName, schema, createIfNotExists, drop, dropIfExists, new HashMap<String, String>());
-    }
-
-    public DefaultSQLCreateTableAction(final String[] fullTableName, final Schema schema, boolean createIfNotExists, boolean drop,
-        boolean dropIfExists, Map<String, String> manualDBType) {
+        boolean dropIfExists) {
         if (fullTableName == null || fullTableName.length < 1) {
             throw new InvalidParameterException("Table name can't be null or empty");
         }
