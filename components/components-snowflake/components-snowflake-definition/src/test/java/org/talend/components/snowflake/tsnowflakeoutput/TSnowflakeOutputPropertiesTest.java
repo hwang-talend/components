@@ -97,7 +97,7 @@ public class TSnowflakeOutputPropertiesTest {
 
         boolean defaultUsePersonalDBType = outputProperties.usePersonalDBType.getValue();
         List<String> defaultDBTypeColumns = outputProperties.dbtypeTable.column.getValue();
-        List<SnowflakeDbTypeProperties.SNOWFLAKE_DBTYPE> defaultDBTypeType = outputProperties.dbtypeTable.dbtype.getValue();
+        List<String> defaultDBTypeType = outputProperties.dbtypeTable.dbtype.getValue();
 
         assertEquals(defaultValueOutputAction, OutputAction.INSERT);
         assertTrue(defaultConvertColumnsAndTableToUppercase);
