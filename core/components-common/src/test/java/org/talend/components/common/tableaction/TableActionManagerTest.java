@@ -38,13 +38,13 @@ public class TableActionManagerTest {
                 .record("main")
                 .fields()
                 .name("integer_fld")
-                .type(AvroUtils._int())
+                .type(Schema.createUnion(AvroUtils._int(), Schema.create(Schema.Type.NULL)))
                 .withDefault(1)
                 .name("string_fld")
-                .type(AvroUtils._string())
+                .type(Schema.createUnion(AvroUtils._string(), Schema.create(Schema.Type.NULL)))
                 .noDefault()
                 .name("date_fld")
-                .type(AvroUtils._logicalDate())
+                .type(Schema.createUnion(AvroUtils._logicalDate(), Schema.create(Schema.Type.NULL)))
                 .noDefault()
                 .endRecord();
     }
